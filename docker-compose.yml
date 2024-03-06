@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+  wigo-agen-frontend:
+    container_name: wigo-agen-frontend
+    image: wigo-agen-frontend:0.0.1
+    build: .
+    volumes:
+    - ./frontend:/app/frontend
+    ports:
+      - 1114:1114
+    restart: always
