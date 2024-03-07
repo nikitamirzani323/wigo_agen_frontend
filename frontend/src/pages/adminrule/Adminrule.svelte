@@ -6,7 +6,8 @@
     let sData = "";
     let record = "";
     let totalrecord = 0;
-    let adminrule_idadmin = "";
+    let adminrule_idadmin = 0;
+    let adminrule_name = "";
     let adminrule_rule = "";
     export let table_header_font = "";
     export let table_body_font = "";
@@ -21,7 +22,7 @@
                 Authorization: "Bearer " + token,
             },
             body: JSON.stringify({
-                page: "ADMINRULE-VIEW",
+                page: "COMPANYADMIN-VIEW",
             }),
         });
         const json = await res.json();
@@ -56,7 +57,8 @@
                         ...listAdminrule,
                         {
                             adminrule_no: no,
-                            adminrule_idadmin: record[i]["adminrule_idadmin"],
+                            adminrule_id: record[i]["adminrule_id"],
+                            adminrule_name: record[i]["adminrule_name"],
                             adminrule_rule: record[i]["adminrule_rule"],
                         },
                     ];
@@ -79,7 +81,9 @@
     };
     const handleEditData = (e) => {
         adminrule_idadmin = e.detail.e;
+        adminrule_name = e.detail.t;
         adminrule_rule = e.detail.f;
+        console.log(e)
         sData = "Edit";
     };
     const handleRefreshData = (e) => {
@@ -111,6 +115,7 @@
             {table_header_font}
             {table_body_font}
             {adminrule_idadmin}
+            {adminrule_name}
             {adminrule_rule}
         />
     {/if}

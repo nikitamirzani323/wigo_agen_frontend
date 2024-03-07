@@ -52,24 +52,9 @@ func Init() *fiber.App {
 	app.Post("/api/login", controllers.CheckLogin)
 	app.Post("/api/valid", controllers.Home)
 	app.Post("/api/alladmin", controllers.Adminhome)
-	app.Post("/api/detailadmin", controllers.AdminDetail)
 	app.Post("/api/saveadmin", controllers.AdminSave)
-
 	app.Post("/api/alladminrule", controllers.Adminrulehome)
 	app.Post("/api/saveadminrule", controllers.AdminruleSave)
-	app.Post("/api/curr", controllers.Currencyhome)
-	app.Post("/api/currsave", controllers.CurrencySave)
-	app.Post("/api/company", controllers.Companyhome)
-	app.Post("/api/companyadmin", controllers.Companyadminhome)
-	app.Post("/api/companyadminrule", controllers.Companyadminrulehome)
-	app.Post("/api/companymoney", controllers.Companymoneyhome)
-	app.Post("/api/companyconf", controllers.Companyconfhome)
-	app.Post("/api/companysave", controllers.CompanySave)
-	app.Post("/api/companyadminsave", controllers.CompanyadminSave)
-	app.Post("/api/companyadminrulesave", controllers.CompanyadminruleSave)
-	app.Post("/api/companymoneysave", controllers.CompanymoneySave)
-	app.Post("/api/companymoneydelete", controllers.CompanymoneyDelete)
-	app.Post("/api/companyconfsave", controllers.CompanyconfSave)
 
 	return app
 }

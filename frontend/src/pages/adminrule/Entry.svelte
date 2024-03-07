@@ -6,7 +6,8 @@
     import * as yup from "yup";
     export let sData = "";
     export let token = "";
-    export let adminrule_idadmin = "";
+    export let adminrule_idadmin = 0;
+    export let adminrule_name = "";
     export let adminrule_rule = "";
     let adminrule_rule_field = adminrule_rule;
 
@@ -26,7 +27,7 @@
     });
     const { form, errors, handleChange, handleSubmit } = createForm({
         initialValues: {
-            admin_name_field: adminrule_idadmin,
+            admin_name_field: adminrule_name,
         },
         validationSchema: schema,
         onSubmit: (values) => {
@@ -51,9 +52,10 @@
             },
             body: JSON.stringify({
                 sdata: sData,
-                page: "ADMINRULE-SAVE",
-                adminrule_idadmin: name,
-                adminrule_rule: adminrule_rule_field,
+                page: "COMPANYADMIN-SAVE",
+                adminrule_id: parseInt(adminrule_idadmin),
+                adminrule_name: $form.admin_name_field,
+                adminrule_rule: adminrule_rule_field.toString(),
             }),
         });
         const json = await res.json();
@@ -86,8 +88,9 @@
                 },
                 body: JSON.stringify({
                     sdata: sData,
-                    page: "ADMINRULE-SAVE",
-                    adminrule_idadmin: adminrule_idadmin,
+                    page: "COMPANYADMIN-SAVE",
+                    adminrule_id: parseInt(adminrule_idadmin),
+                    adminrule_name: $form.admin_name_field,
                     adminrule_rule: adminrule_rule_field.toString(),
                 }),
             });
@@ -187,6 +190,7 @@
                         <thead>
                             <tr>
                                 <th colspan="2">DASHBOARD</th>
+                                <th colspan="2">ADMIN</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -195,28 +199,7 @@
                                     <input
                                         bind:group={adminrule_rule_field}
                                         type="checkbox"
-                                        value="DASHBOARD-VIEW"/>
-                                </td>
-                                <td width="*">VIEW</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                  
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th colspan="2">COMPANY</th>
-                                <th colspan="2">COMPANY ADMIN</th>
-                                <th colspan="2">COMPANY CONFIG</th>
-                                <th colspan="2">CURRENCY MANAGEMENT</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td width="1%">
-                                    <input bind:group={adminrule_rule_field}
-                                        type="checkbox"
-                                        value="COMPANY-VIEW"/>
+                                        value="COMPANYDASHBOARD-VIEW"/>
                                 </td>
                                 <td width="*">VIEW</td>
                                 <td width="1%">
@@ -225,110 +208,16 @@
                                         value="COMPANYADMIN-VIEW"/>
                                 </td>
                                 <td width="*">VIEW</td>
-                                <td width="1%">
-                                    <input bind:group={adminrule_rule_field}
-                                        type="checkbox"
-                                        value="COMPANYCONFIG-VIEW"/>
-                                </td>
-                                <td width="*">VIEW</td>
-                                <td width="1%">
-                                    <input bind:group={adminrule_rule_field}
-                                        type="checkbox"
-                                        value="CURR-VIEW"/>
-                                </td>
-                                <td width="*">VIEW</td>
                             </tr>
                             <tr>
-                                <td width="1%">
-                                    <input bind:group={adminrule_rule_field}
-                                        type="checkbox"
-                                        value="COMPANY-SAVE"/>
-                                </td>
-                                <td width="*">SAVE</td>
+                                <td colspan="2">&nbsp;</td>
                                 <td width="1%">
                                     <input bind:group={adminrule_rule_field}
                                         type="checkbox"
                                         value="COMPANYADMIN-SAVE"/>
                                 </td>
                                 <td width="*">SAVE</td>
-                                <td width="1%">
-                                    <input bind:group={adminrule_rule_field}
-                                        type="checkbox"
-                                        value="COMPANYCONFIG-SAVE"/>
-                                </td>
-                                <td width="*">SAVE</td>
                                 
-                                <td width="1%">
-                                    <input bind:group={adminrule_rule_field}
-                                        type="checkbox"
-                                        value="CURR-SAVE"/>
-                                </td>
-                                <td width="*">SAVE</td>
-                                
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th colspan="2">ADMIN MANAGEMENT</th>
-                                <th colspan="2">ADMIN RULE</th>
-                                <th colspan="2">AGEN ADMIN MANAGEMENT</th>
-                                <th colspan="2">AGEN ADMIN RULE</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td width="1%">
-                                    <input bind:group={adminrule_rule_field}
-                                        type="checkbox"
-                                        value="ADMIN-VIEW"/>
-                                </td>
-                                <td width="*">VIEW</td>
-                                <td width="1%">
-                                    <input bind:group={adminrule_rule_field}
-                                        type="checkbox"
-                                        value="ADMINRULE-VIEW"/>
-                                </td>
-                                <td width="*">VIEW</td>
-                                <td width="1%">
-                                    <input bind:group={adminrule_rule_field}
-                                        type="checkbox"
-                                        value="AGENADMIN-VIEW"/>
-                                </td>
-                                <td width="*">VIEW</td>
-                                <td width="1%">
-                                    <input bind:group={adminrule_rule_field}
-                                        type="checkbox"
-                                        value="AGENADMINRULE-VIEW"/>
-                                </td>
-                                <td width="*">VIEW</td>
-                            </tr>
-                            <tr>
-                                <td width="1%">
-                                    <input bind:group={adminrule_rule_field}
-                                        type="checkbox"
-                                        value="ADMIN-SAVE"/>
-                                </td>
-                                <td width="*">SAVE</td>
-                                <td width="1%">
-                                    <input bind:group={adminrule_rule_field}
-                                        type="checkbox"
-                                        value="ADMINRULE-SAVE"/>
-                                </td>
-                                <td width="*">SAVE</td>
-                                <td width="1%">
-                                    <input bind:group={adminrule_rule_field}
-                                        type="checkbox"
-                                        value="AGENADMIN-SAVE"/>
-                                </td>
-                                <td width="*">SAVE</td>
-                                <td width="1%">
-                                    <input bind:group={adminrule_rule_field}
-                                        type="checkbox"
-                                        value="AGENADMINRULE-SAVE"/>
-                                </td>
-                                <td width="*">SAVE</td>
                             </tr>
                         </tbody>
                     </table>

@@ -47,9 +47,10 @@
     const RefreshHalaman = () => {
         dispatch("handleRefreshData", "call");
     };
-    const EditData = (e, f) => {
+    const EditData = (e,t, f) => {
         const adminrule = {
             e,
+            t,
             f,
         };
         dispatch("handleEditData", adminrule);
@@ -63,7 +64,7 @@
             },
             body: JSON.stringify({
                 sdata: sData,
-                page: "ADMINRULE-SAVE",
+                page: "COMPANYADMIN-SAVE",
                 adminrule_idadmin: name,
                 adminrule_rule: "",
             }),
@@ -145,13 +146,14 @@
                                             style="text-align: center;vertical-align: top;cursor:pointer;">
                                             <i on:click={() => {
                                                     EditData(
-                                                        rec.adminrule_idadmin,
+                                                        rec.adminrule_id,
+                                                        rec.adminrule_name,
                                                         rec.adminrule_rule
                                                     );
                                                 }} class="bi bi-pencil"/>
                                         </td>
                                         <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.adminrule_no}</td>
-                                        <td NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.adminrule_idadmin}</td>
+                                        <td NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.adminrule_name}</td>
                                     </tr>
                                 {/each}
                             </tbody>

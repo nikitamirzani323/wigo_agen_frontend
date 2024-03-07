@@ -12,7 +12,7 @@
                 Authorization: "Bearer " + token,
             },
             body: JSON.stringify({
-                page: "DASHBOARD-VIEW",
+                page: "COMPANYDASHBOARD-VIEW",
             }),
         });
         const json = await res.json();

@@ -21,6 +21,7 @@
     let css_loader = "display: none;";
     let msgloader = "";
     let schema  = "";
+    let idrecord = 0;
     
     if(sData == "New"){
         schema = yup.object().shape({
@@ -31,7 +32,7 @@
             password: yup.string().required("The Password is required").
                         min(4,"The Password minimal 3 Character").
                         max(30,"The Password mmaximal 30 Character"),
-            rule: yup.string().required("The Rule is required"),
+            rule: yup.number().required("The Rule is required"),
             name: yup.string().required("The Name is required").
                         matches(/^[a-zA-z0-9 ]+$/, "Name must Character A-Z or a-z or 1-9 ").
                         min(3,"The Name minimal 3 Character").
@@ -43,7 +44,7 @@
             username: yup.string(),
             password: yup.string().
                         max(30,"The Password mmaximal 30 Character"),
-            rule: yup.string().required("The Rule is required"),
+            rule: yup.number().required("The Rule is required"),
             name: yup.string().required("The Name is required").
                         matches(/^[a-zA-z0-9 ]+$/, "Name must Character A-Z or a-z or 1-9 ").
                         min(3,"The Name minimal 3 Character").
@@ -65,21 +66,17 @@
             handleSave(values.username,values.password,values.rule,values.name,values.status)
         }
     })
-    const NewData = (e,username,pass,rule,name,status) => {
+    const NewData = (e,id,username,pass,rule,name,status) => {
         sData = e
         if(sData == "New"){
             clearField()
         }else{
             username_flag = true
+            idrecord = parseInt(id)
             $form.username = username
             $form.password = pass
             $form.rule = rule
             $form.name = name
-            if(status == "ACTIVE"){
-                status = "Y"
-            }else{
-                status = "N"
-            }
             $form.status = status
         }
         myModal_newentry = new bootstrap.Modal(document.getElementById("modalentry"));
@@ -98,8 +95,9 @@
             },
             body: JSON.stringify({
                 sdata: sData,
-                page:"ADMIN-SAVE",
-                admin_rule: rule,
+                page:"COMPANYADMIN-SAVE",
+                admin_id: parseInt(idrecord),
+                admin_idrule: parseInt(rule),
                 admin_username: username,
                 admin_password: password,
                 admin_nama: name,
@@ -160,6 +158,13 @@
                 handleSubmit();break;
         }
     }
+    function status(e){
+        let result = "DEACTIVE"
+        if(e == "Y"){
+            result = "ACTIVE"
+        }
+        return result
+    }
 </script>
 <div id="loader" style="margin-left:50%;{css_loader}">
     {msgloader}
@@ -186,10 +191,10 @@
                                 <tr>
                                     <th NOWRAP width="1%" style="text-align: center;vertical-align: top;">&nbsp;</th>
                                     <th NOWRAP width="1%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:{table_header_font};">&nbsp;</th>
-                                    <th NOWRAP width="1%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:{table_header_font};">NO</th>
+                                    <th NOWRAP width="5%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:{table_header_font};">NO</th>
+                                    <th NOWRAP width="5%" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">RULE</th>
                                     <th NOWRAP width="5%" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">USERNAME</th>
                                     <th NOWRAP width="*" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">NAME</th>
-                                    <th NOWRAP width="10%" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">RULE</th>
                                     <th NOWRAP width="10%" style="text-align: center;vertical-align: top;font-weight:bold;font-size: {table_header_font};">JOIN DATE</th>
                                     <th NOWRAP width="10%" style="text-align: center;vertical-align: top;font-weight:bold;font-size: {table_header_font};">LAST LOGIN</th>
                                     <th NOWRAP width="10%" style="text-align: center;vertical-align: top;font-weight:bold;font-size: {table_header_font};">LAST IPADDRESS</th>
@@ -200,21 +205,20 @@
                                 {#each listAdmin as rec }
                                     <tr>
                                         <td NOWRAP style="text-align: center;vertical-align: top;cursor:pointer;">
-                                            <i 
-                                                on:click={() => {
-                                                    NewData("Edit",rec.admin_username,"",rec.admin_rule,rec.admin_nama,rec.admin_status);
+                                            <i on:click={() => {
+                                                    NewData("Edit",rec.admin_id,rec.admin_username,"",rec.admin_idrule,rec.admin_nama,rec.admin_status);
                                                 }} 
                                                 class="bi bi-pencil"></i>
                                         </td>
                                         <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">
-                                            <span style="padding: 5px;border-radius: 10px;padding-right:10px;padding-left:10px;{rec.admin_statuscss}">
-                                                {rec.admin_status}
+                                            <span style="padding: 5px;border-radius: 10px;padding-right:10px;padding-left:10px;{rec.admin_status_css}">
+                                                {status(rec.admin_status)}
                                             </span>
                                         </td>
                                         <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.admin_no}</td>
+                                        <td NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.admin_rule}</td>
                                         <td NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.admin_username}</td>
                                         <td NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.admin_nama}</td>
-                                        <td NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.admin_rule}</td>
                                         <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.admin_joindate}</td>
                                         <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.admin_lastlogin}</td>
                                         <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.admin_lastipaddres}</td>
@@ -256,7 +260,7 @@
                 class="form-control required">
                 <option value="">--Select--</option>
                 {#each listAdminrule as rec }
-                    <option value="{rec.adminrule_idruleadmin}">{rec.adminrule_idruleadmin}</option>
+                    <option value="{rec.adminrule_id}">{rec.adminrule_name}</option>
                 {/each}
             </select>
 		</div>
@@ -279,7 +283,7 @@
                 bind:value={$form.password}
                 invalid={$errors.password.length > 0}
                 type="password"
-                class="form-control required"
+                class="form-control "
                 placeholder="Password"
                 aria-label="Password"/>
         </div>

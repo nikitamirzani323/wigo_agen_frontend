@@ -18,7 +18,7 @@
         Authorization: "Bearer " + token,
       },
       body: JSON.stringify({
-        page: "ADMIN-VIEW",
+        page: "COMPANYADMIN-VIEW",
       }),
     });
     const json = await res.json();
@@ -50,23 +50,20 @@
       if (record != null) {
         for (var i = 0; i < record.length; i++) {
           no = no + 1;
-          if (record[i]["admin_status"] == "ACTIVE") {
-            css_status = "background:#10b981;color:#ffffff;font-weight:bold;";
-          } else {
-            css_status = "background:#E91E63;font-size:12px;font-weight:bold;color:white;";
-          }
           listAdmin = [
             ...listAdmin,
             {
               admin_no: no,
+              admin_id: record[i]["admin_id"],
+              admin_idrule: record[i]["admin_idrule"],
               admin_username: record[i]["admin_username"],
               admin_nama: record[i]["admin_nama"],
               admin_rule: record[i]["admin_rule"],
-              admin_joindate: dayjs(record[i]["admin_joindate"]).format("YYYY-MM-DD"),
-              admin_lastlogin: dayjs(record[i]["admin_lastlogin"]).format("YYYY-MM-DD"),
+              admin_joindate: record[i]["admin_joindate"],
+              admin_lastlogin: record[i]["admin_lastlogin"],
               admin_lastipaddres: record[i]["admin_lastipaddres"],
               admin_status: record[i]["admin_status"],
-              admin_statuscss: css_status,
+              admin_status_css: record[i]["admin_status_css"],
             },
           ];
         }
@@ -76,7 +73,8 @@
           listAdminrule = [
             ...listAdminrule,
             {
-              adminrule_idruleadmin: recordlistrule[i]["adminrule_idruleadmin"],
+              adminrule_id: recordlistrule[i]["adminrule_id"],
+              adminrule_name: recordlistrule[i]["adminrule_name"],
             },
           ];
         }
