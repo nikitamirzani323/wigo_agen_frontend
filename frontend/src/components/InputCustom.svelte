@@ -41,6 +41,16 @@
         type="text"
         placeholder="{input_placeholder}"/>
 {/if}
+{#if input_tipe == "text_result"}
+    <input 
+        bind:value
+        {disabled}
+        class="form-control {input_required}"
+        maxlength="{input_maxlength}"
+        style="text-align: center;"
+        type="text"
+        placeholder="{input_placeholder}"/>
+{/if}
 {#if input_tipe == "text_uppercase_trim"}
     <input 
         bind:value
