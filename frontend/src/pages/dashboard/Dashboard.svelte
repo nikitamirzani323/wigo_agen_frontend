@@ -290,16 +290,17 @@
                 </div>
                 <div class="mb-3">
                     <div class="d-grid gap-1">
-                        {#if flag_btnsave}
-                        <Button on:click={() => {
-                                handleSave_invoice();
-                            }} 
-                            button_function="SAVE"
-                            button_title="<i class='bi bi-save'></i>&nbsp;&nbsp;Save"
-                            button_css="btn-warning"/>
+                        {#if invoice_status_field == "OPEN"}
+                            {#if flag_btnsave}
+                            <Button on:click={() => {
+                                    handleSave_invoice();
+                                }} 
+                                button_function="SAVE"
+                                button_title="<i class='bi bi-save'></i>&nbsp;&nbsp;Save"
+                                button_css="btn-warning"/>
+                            {/if}
                         {/if}
                     </div>
-
                 </div>
                 
             </div>
