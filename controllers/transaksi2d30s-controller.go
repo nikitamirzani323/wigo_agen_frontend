@@ -13,7 +13,7 @@ type response_transaksi2d30s struct {
 	Status  int         `json:"status"`
 	Message string      `json:"message"`
 	Record  interface{} `json:"record"`
-	Periode int         `json:"periode"`
+	Periode string      `json:"periode"`
 	Time    string      `json:"time"`
 }
 type response_transaksi2d30sprediksi struct {

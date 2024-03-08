@@ -52,6 +52,8 @@
     let invoice_totalwin_field = 0
     let invoice_winlose_field = 0
 
+    let listallinvoice = []
+    let title_allinvoice = "";
     let listprediksi = []
     let prediksi_totalmember = 0
     let prediksi_totalbet = 0
@@ -60,6 +62,11 @@
 
     let css_loader = "display: none;";
     let msgloader = "";
+    const call_allinvoice = () => {
+        call_alldatainvoice()
+        myModal_newentry = new bootstrap.Modal(document.getElementById("modal_allinvoice"));
+        myModal_newentry.show();
+    };
     const call_editinvoice = (e) => {
         invoice_id_field = e
         invoice_status_field = ""
@@ -98,6 +105,53 @@
                     invoice_winlose_field = record[i]["transaksi2D30s_winlose"];
                     invoice_status_field = record[i]["transaksi2D30s_status"];
                     invoice_statuscss_field = record[i]["transaksi2D30s_status_css"];
+                   
+                }
+            }
+        }
+    }
+    async function call_alldatainvoice() {
+        listallinvoice = []
+        prediksi_winlose = 0
+        const res = await fetch("/api/transaksi2d30s", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+            },
+            body: JSON.stringify({
+            }),
+        });
+        const json = await res.json();
+        if (json.status == 200) {
+            let record = json.record;
+            title_allinvoice = json.periode;
+            if (record != null) {
+                let no = 0;
+                let winlose_css = "";
+                for (var i = 0; i < record.length; i++) {
+                    no = no + 1;
+                    if(parseInt(record[i]["transaksi2D30s_winlose"]) > 0){
+                        winlose_css = "color:blue;"
+                    }else{
+                        winlose_css = "color:red;"
+                    }
+                    listallinvoice = [
+                        ...listallinvoice,
+                        {
+                            transaksi2D30s_no: no,
+                            transaksi2D30s_id: record[i]["transaksi2D30s_id"],
+                            transaksi2D30s_idcurr: record[i]["transaksi2D30s_idcurr"],
+                            transaksi2D30s_date: record[i]["transaksi2D30s_date"],
+                            transaksi2D30s_result: record[i]["transaksi2D30s_result"],
+                            transaksi2D30s_totalbet: record[i]["transaksi2D30s_totalbet"],
+                            transaksi2D30s_totalwin: record[i]["transaksi2D30s_totalwin"],
+                            transaksi2D30s_winlose: record[i]["transaksi2D30s_winlose"],
+                            transaksi2D30s_winlose_css: winlose_css,
+                            transaksi2D30s_create: record[i]["transaksi2D30s_create"],
+                            transaksi2D30s_update: record[i]["transaksi2D30s_update"],
+                        },
+                    ];
                    
                 }
             }
@@ -225,14 +279,23 @@
                 </div>
                 <div class="card-footer">
                     <center>
-                        <button type="button" class="btn btn-primary btn-sm">Invoice</button>
+                        <Button on:click={() => {
+                                call_allinvoice();
+                            }} 
+                            button_title="<i class='bi bi-file-earmark'></i>&nbsp;Invoice"
+                            button_css="btn-primary"/>
                         {#if engine_invoice != ""}
                             <Button on:click={() => {
                                 call_editinvoice(engine_invoice);
                             }} 
-                            button_title="<i class='bi pencil'></i>&nbsp;Edit"
+                            button_title="<i class='bi bi-pencil'></i>&nbsp;Edit"
                             button_css="btn-info"/>
                         {/if}
+                        <Button on:click={() => {
+                                call_editinvoice(engine_invoice);
+                            }} 
+                            button_title="<i class='bi bi-gear'></i>&nbsp;Setting"
+                            button_css="btn-info"/>
                     </center>
                 </div>
             </div>
@@ -351,5 +414,59 @@
                 </table>
             </div>
         </div>
+	</slot:template>
+</Modal>
+
+<Modal
+	modal_id="modal_allinvoice"
+	modal_size="modal-dialog-centered modal-lg"
+	modal_title="PERIODE : {title_allinvoice}"
+    modal_body_css="height:500px; overflow-y: scroll;"
+    modal_footer_css="padding:5px;"
+	modal_footer={true}>
+	<slot:template slot="body">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th width="5%" style="text-align: left;vertical-align: top;font-weight:bold;font-size:12px;">INVOICE</th>
+                    <th width="20%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:12px;">DATE</th>
+                    <th width="5%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:12px;">NOMOR</th>
+                    <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">BET</th>
+                    <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WIN</th>
+                    <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WINLOSE</th>
+                </tr>
+            </thead>
+            <tbody>
+                {#each listallinvoice as rec}
+                <tr>
+                    <td NOWRAP style="text-align: left;vertical-align: top;font-size: 12px;">{rec.transaksi2D30s_id}</td>
+                    <td NOWRAP style="text-align: center;vertical-align: top;font-size: 12px;">{rec.transaksi2D30s_date}</td>
+                    <td NOWRAP style="text-align: center;vertical-align: top;font-size: 12px;">{rec.transaksi2D30s_result}</td>
+                    <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:blue;">{new Intl.NumberFormat().format(rec.transaksi2D30s_totalbet)}</td>
+                    <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:red;">{new Intl.NumberFormat().format(rec.transaksi2D30s_totalwin)}</td>
+                    <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;{rec.transaksi2D30s_winlose_css}">{new Intl.NumberFormat().format(rec.transaksi2D30s_winlose)}</td>
+                </tr>
+                {/each}
+            </tbody>
+        </table>
+	</slot:template>
+    <slot:template slot="footer">
+        <table>
+            <tr>
+                <td>TOTAL BET</td>
+                <td>:</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>TOTAL WIN</td>
+                <td>:</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>WINLOSE</td>
+                <td>:</td>
+                <td>0</td>
+            </tr>
+        </table>
 	</slot:template>
 </Modal>
