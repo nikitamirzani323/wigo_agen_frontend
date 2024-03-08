@@ -227,11 +227,11 @@
                     <center>
                         <button type="button" class="btn btn-primary btn-sm">Invoice</button>
                         {#if engine_invoice != ""}
-                        <Button on:click={() => {
-                            call_editinvoice(engine_invoice);
-                        }} 
-                        button_title="<i class='bi pencil'></i>&nbsp;Edit"
-                        button_css="btn-info"/>
+                            <Button on:click={() => {
+                                call_editinvoice(engine_invoice);
+                            }} 
+                            button_title="<i class='bi pencil'></i>&nbsp;Edit"
+                            button_css="btn-info"/>
                         {/if}
                     </center>
                 </div>
@@ -255,7 +255,7 @@
                         bind:value={invoice_id_field}
                         input_tipe="text_standart"
                         input_required="required"
-                        input_maxlength="30"
+                        input_maxlength="50"
                         disabled=disabled
                         input_placeholder="INVOICE"/>
                 </div>
@@ -309,22 +309,22 @@
                     <tr>
                         <td>Total Member</td>
                         <td>:</td>
-                        <td style="color:blue;">{prediksi_totalmember}</td>
+                        <td style="color:blue;">{new Intl.NumberFormat().format(prediksi_totalmember)}</td>
                     </tr>
                     <tr>
                         <td>Total Bet</td>
                         <td>:</td>
-                        <td style="color:blue;">{prediksi_totalbet}</td>
+                        <td style="color:blue;">{new Intl.NumberFormat().format(prediksi_totalbet)}</td>
                     </tr>
                     <tr>
                         <td>Total Win</td>
                         <td>:</td>
-                        <td style="color:blue;">{prediksi_totalwin}</td>
+                        <td style="color:blue;">{new Intl.NumberFormat().format(prediksi_totalwin)}</td>
                     </tr>
                     <tr>
                         <td>Winlose</td>
                         <td>:</td>
-                        <td style="color:blue;">{prediksi_winlose}</td>
+                        <td style="color:blue;">{new Intl.NumberFormat().format(prediksi_winlose)}</td>
                     </tr>
                 </table>
                 <table class="table table-sm">
