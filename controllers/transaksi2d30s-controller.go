@@ -10,11 +10,15 @@ import (
 )
 
 type response_transaksi2d30s struct {
-	Status  int         `json:"status"`
-	Message string      `json:"message"`
-	Record  interface{} `json:"record"`
-	Periode string      `json:"periode"`
-	Time    string      `json:"time"`
+	Status      int         `json:"status"`
+	Message     string      `json:"message"`
+	Record      interface{} `json:"record"`
+	Periode     string      `json:"periode"`
+	Perpage     int         `json:"perpage"`
+	Totalrecord int         `json:"totalrecord"`
+	Totalbet    int         `json:"totalbet"`
+	Totalwin    int         `json:"totalwin"`
+	Time        string      `json:"time"`
 }
 type response_transaksi2d30sprediksi struct {
 	Status      int         `json:"status"`
@@ -29,6 +33,8 @@ type response_transaksi2d30sprediksi struct {
 
 func Transaksi2d30shome(c *fiber.Ctx) error {
 	type payload_transaksi2d30shome struct {
+		Transaksi2D30s_search  string `json:"transaksi2D30s_search"`
+		Transaksi2D30s_page    int    `json:"transaksi2D30s_page"`
 		Transaksi2D30s_invoice string `json:"transaksi2D30s_invoice"`
 	}
 	hostname := c.Hostname()
@@ -54,6 +60,8 @@ func Transaksi2d30shome(c *fiber.Ctx) error {
 		SetHeader("Content-Type", "application/json").
 		SetBody(map[string]interface{}{
 			"client_hostname":        hostname,
+			"transaksi2D30s_search":  client.Transaksi2D30s_search,
+			"transaksi2D30s_page":    client.Transaksi2D30s_page,
 			"transaksi2D30s_invoice": client.Transaksi2D30s_invoice,
 		}).
 		Post(PATH + "api/transaksi2d30s")
@@ -72,11 +80,15 @@ func Transaksi2d30shome(c *fiber.Ctx) error {
 	result := resp.Result().(*response_transaksi2d30s)
 	if result.Status == 200 {
 		return c.JSON(fiber.Map{
-			"status":  result.Status,
-			"message": result.Message,
-			"record":  result.Record,
-			"periode": result.Periode,
-			"time":    time.Since(render_page).String(),
+			"status":      result.Status,
+			"message":     result.Message,
+			"record":      result.Record,
+			"perpage":     result.Perpage,
+			"totalrecord": result.Totalrecord,
+			"totalbet":    result.Totalbet,
+			"totalwin":    result.Totalwin,
+			"periode":     result.Periode,
+			"time":        time.Since(render_page).String(),
 		})
 	} else {
 		result_error := resp.Error().(*responseerror)

@@ -54,12 +54,22 @@
 
     let listallinvoice = []
     let title_allinvoice = "";
+    let allinvoice_totalbet = 0;
+    let allinvoice_totalwin = 0;
+    let allinvoice_winlose = 0;
+    let allinvoice_winlose_css = "";
     let listprediksi = []
     let prediksi_totalmember = 0
     let prediksi_totalbet = 0
     let prediksi_totalwin = 0
     let prediksi_winlose = 0
 
+    let listPage = [];
+    let totalrecord = 0;
+    let totalrecordall = 0;
+    let totalpaging = 0;
+    let perpage = 0;
+    let page = 0;
     let css_loader = "display: none;";
     let msgloader = "";
     const call_allinvoice = () => {
@@ -112,7 +122,9 @@
     }
     async function call_alldatainvoice() {
         listallinvoice = []
-        prediksi_winlose = 0
+        allinvoice_totalbet = 0;
+        allinvoice_totalwin = 0;
+        allinvoice_winlose = 0;
         const res = await fetch("/api/transaksi2d30s", {
             method: "POST",
             headers: {
@@ -120,13 +132,26 @@
                 Authorization: "Bearer " + token,
             },
             body: JSON.stringify({
+                transaksi2D30s_page: parseInt(page),
             }),
         });
         const json = await res.json();
         if (json.status == 200) {
             let record = json.record;
             title_allinvoice = json.periode;
+            allinvoice_totalbet = json.totalbet;
+            allinvoice_totalwin = json.totalwin;
+            allinvoice_winlose = parseInt(allinvoice_totalbet) - parseInt(allinvoice_winlose);
+            if(allinvoice_winlose > 0){
+                allinvoice_winlose_css = "color:blue;"
+            }else{
+                allinvoice_winlose_css = "color:red;"
+            }
+            perpage = json.perpage;
+            totalrecordall = json.totalrecord;
             if (record != null) {
+                totalpaging = Math.ceil(parseInt(totalrecordall) / parseInt(perpage))
+                totalrecord = record.length;
                 let no = 0;
                 let winlose_css = "";
                 for (var i = 0; i < record.length; i++) {
@@ -144,6 +169,7 @@
                             transaksi2D30s_idcurr: record[i]["transaksi2D30s_idcurr"],
                             transaksi2D30s_date: record[i]["transaksi2D30s_date"],
                             transaksi2D30s_result: record[i]["transaksi2D30s_result"],
+                            transaksi2D30s_totalmember: record[i]["transaksi2D30s_totalmember"],
                             transaksi2D30s_totalbet: record[i]["transaksi2D30s_totalbet"],
                             transaksi2D30s_totalwin: record[i]["transaksi2D30s_totalwin"],
                             transaksi2D30s_winlose: record[i]["transaksi2D30s_winlose"],
@@ -153,6 +179,17 @@
                         },
                     ];
                    
+                }
+                listPage = [];
+                for(var i=1;i<=totalpaging;i++){
+                    listPage = [
+                        ...listPage,
+                        {
+                            page_id: i,
+                            page_value: ((i*perpage)-perpage),
+                            page_display: i + " Of " + perpage*i,
+                        },
+                    ];
                 }
             }
         }
@@ -253,6 +290,10 @@
             alert(msg)
         }
     }
+    const handleSelectPaging = (event) => {
+        page = event.target.value;
+        call_alldatainvoice()
+    };
 </script>
 <div id="loader" style="margin-left:50%;{css_loader}">
     {msgloader}
@@ -423,7 +464,20 @@
 	modal_title="PERIODE : {title_allinvoice}"
     modal_body_css="height:500px; overflow-y: scroll;"
     modal_footer_css="padding:5px;"
+	modal_search={true}
 	modal_footer={true}>
+    <slot:template slot="search">
+        <div class="float-end">
+            <select
+                on:change={handleSelectPaging}
+                style="text-align: center;"
+                class="form-control">
+                {#each listPage as rec}
+                    <option value={rec.page_value}>{rec.page_display}</option>
+                {/each}
+            </select>
+        </div>
+    </slot:template>
 	<slot:template slot="body">
         <table class="table table-sm">
             <thead>
@@ -431,6 +485,7 @@
                     <th width="5%" style="text-align: left;vertical-align: top;font-weight:bold;font-size:12px;">INVOICE</th>
                     <th width="20%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:12px;">DATE</th>
                     <th width="5%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:12px;">NOMOR</th>
+                    <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">MEMBER</th>
                     <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">BET</th>
                     <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WIN</th>
                     <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WINLOSE</th>
@@ -442,6 +497,7 @@
                     <td NOWRAP style="text-align: left;vertical-align: top;font-size: 12px;">{rec.transaksi2D30s_id}</td>
                     <td NOWRAP style="text-align: center;vertical-align: top;font-size: 12px;">{rec.transaksi2D30s_date}</td>
                     <td NOWRAP style="text-align: center;vertical-align: top;font-size: 12px;">{rec.transaksi2D30s_result}</td>
+                    <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:blue;">{new Intl.NumberFormat().format(rec.transaksi2D30s_totalmember)}</td>
                     <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:blue;">{new Intl.NumberFormat().format(rec.transaksi2D30s_totalbet)}</td>
                     <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:red;">{new Intl.NumberFormat().format(rec.transaksi2D30s_totalwin)}</td>
                     <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;{rec.transaksi2D30s_winlose_css}">{new Intl.NumberFormat().format(rec.transaksi2D30s_winlose)}</td>
@@ -451,21 +507,21 @@
         </table>
 	</slot:template>
     <slot:template slot="footer">
-        <table>
+        <table class="table">
             <tr>
-                <td>TOTAL BET</td>
-                <td>:</td>
-                <td>0</td>
+                <td style="font-size: 12px;">TOTAL BET</td>
+                <td style="font-size: 12px;">:</td>
+                <td style="font-size: 12px;color:blue;">{new Intl.NumberFormat().format(allinvoice_totalbet)}</td>
             </tr>
             <tr>
-                <td>TOTAL WIN</td>
-                <td>:</td>
-                <td>0</td>
+                <td style="font-size: 12px;">TOTAL WIN</td>
+                <td style="font-size: 12px;">:</td>
+                <td style="font-size: 12px;color:red;">{new Intl.NumberFormat().format(allinvoice_totalwin)}</td>
             </tr>
             <tr>
-                <td>WINLOSE</td>
-                <td>:</td>
-                <td>0</td>
+                <td style="font-size: 12px;">WINLOSE</td>
+                <td style="font-size: 12px;">:</td>
+                <td style="font-size: 12px;{allinvoice_winlose_css}">{new Intl.NumberFormat().format(allinvoice_winlose)}</td>
             </tr>
         </table>
 	</slot:template>
