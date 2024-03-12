@@ -97,6 +97,11 @@
         myModal_newentry = new bootstrap.Modal(document.getElementById("modal_allinvoice"));
         myModal_newentry.show();
     };
+    const call_detailinvoiceproblem = () => {
+        call_invoicedetail("","RUNNING")
+        myModal_newentry = new bootstrap.Modal(document.getElementById("modal_detailinvoiceproblem"));
+        myModal_newentry.show();
+    };
     const call_editinvoice = (e) => {
         invoice_id_field = e
         invoice_status_field = ""
@@ -218,6 +223,8 @@
                             transaksi2D30sdetail_winlose_member: winlose_member,
                             transaksi2D30sdetail_winlose_member_css: detail_winlose_member_css,
                             transaksi2D30sdetail_multiplier: record[i]["transaksi2D30sdetail_multiplier"],
+                            transaksi2D30sdetail_status: record[i]["transaksi2D30sdetail_status"],
+                            transaksi2D30sdetail_status_css: record[i]["transaksi2D30sdetail_status_css"],
                         },
                     ];
                    
@@ -259,6 +266,7 @@
         allinvoice_totalbet = 0;
         allinvoice_totalwin = 0;
         allinvoice_winlose = 0;
+        allinvoice_winlose_member = 0;
         const res = await fetch("/api/transaksi2d30s", {
             method: "POST",
             headers: {
@@ -440,7 +448,7 @@
 </div>
 <div class="container" style="margin-top: 70px;">
     <div class="row">
-        <div class="col-lg-3">
+        <div class="col-lg-4">
             <div class="card mt-1">
                 <div class="card-header" style="background-color:#f6f6f6 ;padding:0px;">
                     <h5 class="card-title" style="font-size: 30px;padding:0px;">
@@ -465,6 +473,11 @@
                             }} 
                             button_title="<i class='bi bi-file-earmark'></i>&nbsp;Invoice"
                             button_css="btn-primary"/>
+                        <Button on:click={() => {
+                                call_detailinvoiceproblem();
+                            }} 
+                            button_title="<i class='bi bi-file-earmark'></i>&nbsp;Invoice Problem"
+                            button_css="btn-warning"/>
                         {#if engine_invoice != ""}
                             <Button on:click={() => {
                                 call_editinvoice(engine_invoice);
@@ -679,7 +692,7 @@
 
 <Modal
 	modal_id="modal_detailinvoice"
-	modal_size="modal-dialog-centered modal-lg"
+	modal_size="modal-dialog-centered modal-xl"
 	modal_title="{detail_id}"
     modal_body_css="height:500px; overflow-y: scroll;"
     modal_footer_css="padding:5px;"
@@ -687,14 +700,14 @@
 	<slot:template slot="body">
         <table class="table">
             <tr>
-                <td style="font-size: 12px;">Tanggal</td>
-                <td style="font-size: 12px;">:</td>
-                <td style="font-size: 12px;text-align: center;">{detail_date}</td>
+                <td style="font-size: 13px;">Tanggal</td>
+                <td style="font-size: 13px;">:</td>
+                <td style="font-size: 13px;text-align: center;">{detail_date}</td>
             </tr>
             <tr>
-                <td style="font-size: 12px;">Result</td>
-                <td style="font-size: 12px;">:</td>
-                <td style="font-size: 12px;text-align: center;">{detail_result}</td>
+                <td style="font-size: 13px;">Result</td>
+                <td style="font-size: 13px;">:</td>
+                <td style="font-size: 13px;text-align: center;">{detail_result}</td>
             </tr>
            
         </table>
@@ -719,22 +732,34 @@
             <thead>
                 <tr>
                     <th width="1%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:12px;">NO</th>
+                    <th width="10%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:12px;">TANGGAL</th>
                     <th width="*" style="text-align: left;vertical-align: top;font-weight:bold;font-size:12px;">USERNAME</th>
-                    <th width="20%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:12px;">NOMOR</th>
-                    <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">BET</th>
-                    <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WIN</th>
-                    <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WINLOSE MEMBER</th>
-                    <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WINLOSE AGEN</th>
+                    <th width="10%" style="text-align: left;vertical-align: top;font-weight:bold;font-size:12px;">IPADDRESS</th>
+                    <th width="10%" style="text-align: left;vertical-align: top;font-weight:bold;font-size:12px;">BROWSER</th>
+                    <th width="10%" style="text-align: left;vertical-align: top;font-weight:bold;font-size:12px;">TIMEZONE</th>
+                    <th width="10%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:12px;">TIPE</th>
+                    <th width="10%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:12px;">NOMOR</th>
+                    <th NOWRAP width="10%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">BET</th>
+                    <th NOWRAP width="10%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WIN</th>
+                    <th NOWRAP width="10%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">MULTIPLIER</th>
+                    <th NOWRAP width="10%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WINLOSE<br />MEMBER</th>
+                    <th NOWRAP width="10%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WINLOSE<br />AGEN</th>
                 </tr>
             </thead>
             <tbody>
                 {#each listdetailinvoice as rec}
                 <tr>
                     <td NOWRAP style="text-align: center;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sdetail_no}</td>
+                    <td NOWRAP style="text-align: center;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sdetail_date}</td>
                     <td NOWRAP style="text-align: left;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sdetail_username}</td>
+                    <td NOWRAP style="text-align: left;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sdetail_ipaddress}</td>
+                    <td NOWRAP style="text-align: left;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sdetail_browser}</td>
+                    <td NOWRAP style="text-align: left;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sdetail_device}</td>
+                    <td NOWRAP style="text-align: center;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sdetail_tipebet}</td>
                     <td NOWRAP style="text-align: center;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sdetail_nomor}</td>
                     <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:blue;">{new Intl.NumberFormat().format(rec.transaksi2D30sdetail_bet)}</td>
                     <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:blue;">{new Intl.NumberFormat().format(rec.transaksi2D30sdetail_win)}</td>
+                    <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:blue;">{new Intl.NumberFormat().format(rec.transaksi2D30sdetail_multiplier)}</td>
                     <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;{rec.transaksi2D30sdetail_winlose_member_css}">{new Intl.NumberFormat().format(rec.transaksi2D30sdetail_winlose_member)}</td>
                     <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;{rec.transaksi2D30sdetail_winlose_agen_css}">{new Intl.NumberFormat().format(rec.transaksi2D30sdetail_winlose_agen)}</td>
                 </tr>
@@ -770,5 +795,69 @@
                 <td style="{detail_winloseparent_member_css}font-size: 12px;text-align: right;">{new Intl.NumberFormat().format(detail_winloseparent_member)}</td>
             </tr>
         </table>
+	</slot:template>
+</Modal>
+
+<Modal
+	modal_id="modal_detailinvoiceproblem"
+	modal_size="modal-dialog-centered modal-xl"
+	modal_title="INVOICE PROBLEM"
+    modal_body_css="height:500px; overflow-y: scroll;"
+    modal_footer_css="padding:5px;"
+	modal_footer={true}>
+	<slot:template slot="body">
+        
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th width="1%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:12px;">NO</th>
+                    <th width="1%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:12px;">&nbsp;</th>
+                    <th width="10%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:12px;">TANGGAL</th>
+                    <th width="*" style="text-align: left;vertical-align: top;font-weight:bold;font-size:12px;">USERNAME</th>
+                    <th width="10%" style="text-align: left;vertical-align: top;font-weight:bold;font-size:12px;">IPADDRESS</th>
+                    <th width="10%" style="text-align: left;vertical-align: top;font-weight:bold;font-size:12px;">BROWSER</th>
+                    <th width="10%" style="text-align: left;vertical-align: top;font-weight:bold;font-size:12px;">TIMEZONE</th>
+                    <th width="10%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:12px;">TIPE</th>
+                    <th width="10%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:12px;">NOMOR</th>
+                    <th NOWRAP width="10%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">BET</th>
+                    <th NOWRAP width="10%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WIN</th>
+                    <th NOWRAP width="10%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">MULTIPLIER</th>
+                    <th NOWRAP width="10%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WINLOSE<br />MEMBER</th>
+                    <th NOWRAP width="10%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WINLOSE<br />AGEN</th>
+                </tr>
+            </thead>
+            <tbody>
+                {#each listdetailinvoice as rec}
+                <tr>
+                    <td NOWRAP style="text-align: center;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sdetail_no}</td>
+                    <td NOWRAP style="text-align: center;vertical-align: top;font-size: 12px;">
+                        <span style="padding: 5px;border-radius: 10px;padding-right:10px;padding-left:10px;{rec.transaksi2D30sdetail_status_css}">
+                            {rec.transaksi2D30sdetail_status}
+                        </span>
+                    </td>
+                    <td NOWRAP style="text-align: center;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sdetail_date}</td>
+                    <td NOWRAP style="text-align: left;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sdetail_username}</td>
+                    <td NOWRAP style="text-align: left;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sdetail_ipaddress}</td>
+                    <td NOWRAP style="text-align: left;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sdetail_browser}</td>
+                    <td NOWRAP style="text-align: left;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sdetail_device}</td>
+                    <td NOWRAP style="text-align: center;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sdetail_tipebet}</td>
+                    <td NOWRAP style="text-align: center;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sdetail_nomor}</td>
+                    <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:blue;">{new Intl.NumberFormat().format(rec.transaksi2D30sdetail_bet)}</td>
+                    <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:blue;">{new Intl.NumberFormat().format(rec.transaksi2D30sdetail_win)}</td>
+                    <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:blue;">{new Intl.NumberFormat().format(rec.transaksi2D30sdetail_multiplier)}</td>
+                    <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;{rec.transaksi2D30sdetail_winlose_member_css}">{new Intl.NumberFormat().format(rec.transaksi2D30sdetail_winlose_member)}</td>
+                    <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;{rec.transaksi2D30sdetail_winlose_agen_css}">{new Intl.NumberFormat().format(rec.transaksi2D30sdetail_winlose_agen)}</td>
+                </tr>
+                {/each}
+            </tbody>
+        </table>
+	</slot:template>
+    <slot:template slot="footer">
+        <Button on:click={() => {
+            handleSave_invoiceproblem();
+        }} 
+        button_function="Update"
+        button_title="<i class='bi bi-save'></i>&nbsp;&nbsp;Update"
+        button_css="btn-warning"/>
 	</slot:template>
 </Modal>
