@@ -73,9 +73,13 @@
     let detail_totalmember = 0
     let detail_totalbet = 0
     let detail_totalwin = 0
-    let detail_winlose = 0
     let detail_winlose_agen_css = ""
     let detail_winlose_member_css = ""
+
+    let detail_winloseparent_agen = 0
+    let detail_winloseparent_member = 0
+    let detail_winloseparent_agen_css = ""
+    let detail_winloseparent_member_css = ""
     let detail_tab_win = "active"
     let detail_tab_lose = ""
     let detail_tab_running = ""
@@ -129,8 +133,27 @@
         detail_totalmember = totalmember
         detail_totalbet = totalbet
         detail_totalwin = totalwin
-        detail_winlose = parseInt(detail_totalbet) - parseInt(totalwin)
 
+
+        detail_winloseparent_agen = 0
+        detail_winloseparent_member = 0
+        detail_winloseparent_agen_css = ""
+        detail_winloseparent_member_css = ""
+        detail_winloseparent_agen = parseInt(detail_totalbet) - parseInt(totalwin)
+        detail_winloseparent_agen_css = ""
+        detail_winlose_member_css = ""
+        if(detail_winloseparent_agen>0){
+            detail_winloseparent_member = -detail_winloseparent_agen
+            detail_winloseparent_agen_css ="color:blue;";
+            detail_winloseparent_member_css ="color:red;";
+        }else{
+            detail_winloseparent_member = Math.abs(detail_winloseparent_agen)
+            detail_winloseparent_agen_css ="color:red;";
+            detail_winloseparent_member_css ="color:blue;";
+        }
+        detail_tab_win = "active"
+        detail_tab_lose = ""
+        detail_tab_running = ""
         call_invoicedetail(id,"WIN")
         myModal_newentry = new bootstrap.Modal(document.getElementById("modal_detailinvoice"));
         myModal_newentry.show();
@@ -179,7 +202,7 @@
                     listdetailinvoice = [
                         ...listdetailinvoice,
                         {
-                            transaksi2D30s_no: no,
+                            transaksi2D30sdetail_no: no,
                             transaksi2D30sdetail_id: record[i]["transaksi2D30sdetail_id"],
                             transaksi2D30sdetail_date: record[i]["transaksi2D30sdetail_date"],
                             transaksi2D30sdetail_username: record[i]["transaksi2D30sdetail_username"],
@@ -660,96 +683,92 @@
 	modal_title="{detail_id}"
     modal_body_css="height:500px; overflow-y: scroll;"
     modal_footer_css="padding:5px;"
-	modal_footer={false}>
+	modal_footer={true}>
 	<slot:template slot="body">
-        <div class="row">
-            <div class="col-md-5">
-                <div class="mb-3">
-                    <label for="exampleForm" class="form-label">Date</label>
-                    <Input_custom
-                        bind:value={detail_date}
-                        input_tipe="text_standart"
-                        input_required="required"
-                        input_maxlength="100"
-                        disabled=disabled
-                        input_placeholder="Date"/>
-                </div>
-                <div class="mb-3">
-                    <label for="exampleForm" class="form-label">Result</label>
-                    <Input_custom
-                        bind:value={detail_result}
-                        input_tipe="text_result"
-                        input_required="required"
-                        input_maxlength="2"
-                        disabled=disabled
-                        input_placeholder="Result"/>
-                </div>
-            </div>
-            <div class="col-md-7">
-                <table class="table">
-                    <tr>
-                        <td style="font-size: 12px;">Total Member</td>
-                        <td style="font-size: 12px;">:</td>
-                        <td style="color:blue;font-size: 12px;text-align: right;">{new Intl.NumberFormat().format(detail_totalmember)}</td>
-                    </tr>
-                    <tr>
-                        <td style="font-size: 12px;">Total Bet</td>
-                        <td style="font-size: 12px;">:</td>
-                        <td style="color:blue;font-size: 12px;text-align: right;">{new Intl.NumberFormat().format(detail_totalbet)}</td>
-                    </tr>
-                    <tr>
-                        <td style="font-size: 12px;">Total Win</td>
-                        <td style="font-size: 12px;">:</td>
-                        <td style="color:blue;font-size: 12px;text-align: right;">{new Intl.NumberFormat().format(detail_totalwin)}</td>
-                    </tr>
-                    <tr>
-                        <td style="font-size: 12px;">Winlose</td>
-                        <td style="font-size: 12px;">:</td>
-                        <td style="color:blue;font-size: 12px;text-align: right;">{new Intl.NumberFormat().format(detail_winlose)}</td>
-                    </tr>
-                </table>
-                <ul class="nav nav-pills">
-                    <li on:click={() => {
-                        call_detailinvoice_tab("WIN");
-                    }} class="nav-item" style="cursor: pointer;">
-                      <span class="nav-link {detail_tab_win}">Win</span>
-                    </li>
-                    <li on:click={() => {
-                        call_detailinvoice_tab("LOSE");
-                    }} class="nav-item" style="cursor: pointer;">
-                      <span class="nav-link {detail_tab_lose}">Lose</span>
-                    </li>
-                    <li on:click={() => {
-                        call_detailinvoice_tab("RUNNING");
-                    }} class="nav-item" style="cursor: pointer;">
-                      <span class="nav-link {detail_tab_running}" >Running</span>
-                    </li>
-                </ul>
-                <table class="table table-sm">
-                    <thead>
-                        <tr>
-                            <th width="*" style="text-align: left;vertical-align: top;font-weight:bold;font-size:12px;">USERNAME</th>
-                            <th width="20%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:12px;">NOMOR</th>
-                            <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">BET</th>
-                            <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WIN</th>
-                            <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WINLOSE MEMBER</th>
-                            <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WINLOSE AGEN</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#each listdetailinvoice as rec}
-                        <tr>
-                            <td NOWRAP style="text-align: left;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sdetail_username}</td>
-                            <td NOWRAP style="text-align: center;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sdetail_nomor}</td>
-                            <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:blue;">{new Intl.NumberFormat().format(rec.transaksi2D30sdetail_bet)}</td>
-                            <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:blue;">{new Intl.NumberFormat().format(rec.transaksi2D30sdetail_win)}</td>
-                            <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;{rec.transaksi2D30sdetail_winlose_member_css}">{new Intl.NumberFormat().format(rec.transaksi2D30sdetail_winlose_member)}</td>
-                            <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;{rec.transaksi2D30sdetail_winlose_agen_css}">{new Intl.NumberFormat().format(rec.transaksi2D30sdetail_winlose_agen)}</td>
-                        </tr>
-                        {/each}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <table class="table">
+            <tr>
+                <td style="font-size: 12px;">Tanggal</td>
+                <td style="font-size: 12px;">:</td>
+                <td style="font-size: 12px;text-align: center;">{detail_date}</td>
+            </tr>
+            <tr>
+                <td style="font-size: 12px;">Result</td>
+                <td style="font-size: 12px;">:</td>
+                <td style="font-size: 12px;text-align: center;">{detail_result}</td>
+            </tr>
+           
+        </table>
+        <ul class="nav nav-pills">
+            <li on:click={() => {
+                call_detailinvoice_tab("WIN");
+            }} class="nav-item" style="cursor: pointer;">
+              <span class="nav-link {detail_tab_win}">Win</span>
+            </li>
+            <li on:click={() => {
+                call_detailinvoice_tab("LOSE");
+            }} class="nav-item" style="cursor: pointer;">
+              <span class="nav-link {detail_tab_lose}">Lose</span>
+            </li>
+            <li on:click={() => {
+                call_detailinvoice_tab("RUNNING");
+            }} class="nav-item" style="cursor: pointer;">
+              <span class="nav-link {detail_tab_running}" >Running</span>
+            </li>
+        </ul>
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th width="1%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:12px;">NO</th>
+                    <th width="*" style="text-align: left;vertical-align: top;font-weight:bold;font-size:12px;">USERNAME</th>
+                    <th width="20%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:12px;">NOMOR</th>
+                    <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">BET</th>
+                    <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WIN</th>
+                    <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WINLOSE MEMBER</th>
+                    <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WINLOSE AGEN</th>
+                </tr>
+            </thead>
+            <tbody>
+                {#each listdetailinvoice as rec}
+                <tr>
+                    <td NOWRAP style="text-align: center;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sdetail_no}</td>
+                    <td NOWRAP style="text-align: left;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sdetail_username}</td>
+                    <td NOWRAP style="text-align: center;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sdetail_nomor}</td>
+                    <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:blue;">{new Intl.NumberFormat().format(rec.transaksi2D30sdetail_bet)}</td>
+                    <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:blue;">{new Intl.NumberFormat().format(rec.transaksi2D30sdetail_win)}</td>
+                    <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;{rec.transaksi2D30sdetail_winlose_member_css}">{new Intl.NumberFormat().format(rec.transaksi2D30sdetail_winlose_member)}</td>
+                    <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;{rec.transaksi2D30sdetail_winlose_agen_css}">{new Intl.NumberFormat().format(rec.transaksi2D30sdetail_winlose_agen)}</td>
+                </tr>
+                {/each}
+            </tbody>
+        </table>
+	</slot:template>
+    <slot:template slot="footer">
+        <table class="table">
+            <tr>
+                <td style="font-size: 12px;">Total Member</td>
+                <td style="font-size: 12px;">:</td>
+                <td style="color:blue;font-size: 12px;text-align: right;">{new Intl.NumberFormat().format(detail_totalmember)}</td>
+            </tr>
+            <tr>
+                <td style="font-size: 12px;">Total Bet</td>
+                <td style="font-size: 12px;">:</td>
+                <td style="color:blue;font-size: 12px;text-align: right;">{new Intl.NumberFormat().format(detail_totalbet)}</td>
+            </tr>
+            <tr>
+                <td style="font-size: 12px;">Total Win</td>
+                <td style="font-size: 12px;">:</td>
+                <td style="color:blue;font-size: 12px;text-align: right;">{new Intl.NumberFormat().format(detail_totalwin)}</td>
+            </tr>
+            <tr>
+                <td style="font-size: 12px;">Winlose Agen</td>
+                <td style="font-size: 12px;">:</td>
+                <td style="{detail_winloseparent_agen_css}font-size: 12px;text-align: right;">{new Intl.NumberFormat().format(detail_winloseparent_agen)}</td>
+            </tr>
+            <tr>
+                <td style="font-size: 12px;">Winlose Member</td>
+                <td style="font-size: 12px;">:</td>
+                <td style="{detail_winloseparent_member_css}font-size: 12px;text-align: right;">{new Intl.NumberFormat().format(detail_winloseparent_member)}</td>
+            </tr>
+        </table>
 	</slot:template>
 </Modal>
