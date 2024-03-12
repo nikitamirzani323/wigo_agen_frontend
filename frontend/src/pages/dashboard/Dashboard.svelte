@@ -57,12 +57,28 @@
     let allinvoice_totalbet = 0;
     let allinvoice_totalwin = 0;
     let allinvoice_winlose = 0;
+    let allinvoice_winlose_member = 0;
     let allinvoice_winlose_css = "";
+    let allinvoice_winlose_member_css = "";
     let listprediksi = []
     let prediksi_totalmember = 0
     let prediksi_totalbet = 0
     let prediksi_totalwin = 0
     let prediksi_winlose = 0
+
+    let listdetailinvoice = []
+    let detail_id = ""
+    let detail_date = ""
+    let detail_result = ""
+    let detail_totalmember = 0
+    let detail_totalbet = 0
+    let detail_totalwin = 0
+    let detail_winlose = 0
+    let detail_winlose_agen_css = ""
+    let detail_winlose_member_css = ""
+    let detail_tab_win = "active"
+    let detail_tab_lose = ""
+    let detail_tab_running = ""
 
     let listPage = [];
     let totalrecord = 0;
@@ -84,6 +100,41 @@
         myModal_newentry = new bootstrap.Modal(document.getElementById("modal_resultinvoice"));
         myModal_newentry.show();
     };
+    const call_detailinvoice_tab = (e) => {
+        switch(e){
+            case "WIN":
+                detail_tab_win = "active"
+                detail_tab_lose = ""
+                detail_tab_running = ""
+                call_invoicedetail(detail_id,"WIN")
+                break;
+            case "LOSE":
+                detail_tab_win = ""
+                detail_tab_lose = "active"
+                detail_tab_running = ""
+                call_invoicedetail(detail_id,"LOSE")
+                break;
+            case "RUNNING":
+                detail_tab_win = ""
+                detail_tab_lose = ""
+                detail_tab_running = "active"
+                call_invoicedetail(detail_id,"RUNNING")
+                break;
+        }
+    };
+    const call_detailinvoice = (id,date,result,totalmember,totalbet,totalwin) => {
+        detail_id = id
+        detail_date = date
+        detail_result = result
+        detail_totalmember = totalmember
+        detail_totalbet = totalbet
+        detail_totalwin = totalwin
+        detail_winlose = parseInt(detail_totalbet) - parseInt(totalwin)
+
+        call_invoicedetail(id,"WIN")
+        myModal_newentry = new bootstrap.Modal(document.getElementById("modal_detailinvoice"));
+        myModal_newentry.show();
+    };
     const generateNumber = () => {
         let numbergenerate = Math.floor(Math.random() * 100);
         if(numbergenerate < 10){
@@ -91,6 +142,66 @@
         }
         invoice_result_field = numbergenerate
     };
+    async function call_invoicedetail(e,s) {
+        listdetailinvoice = []
+        detail_winlose_agen_css = ""
+        detail_winlose_member_css = ""
+        const res = await fetch("/api/transaksi2d30sdetail", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+            },
+            body: JSON.stringify({
+                transaksidetail2D30s_invoice: e,
+                transaksidetail2D30s_status: s,
+            }),
+        });
+        const json = await res.json();
+        if (json.status == 200) {
+            let record = json.record;
+            if (record != null) {
+                let no = 0;
+                let winlose_member = 0;
+                let winlose_agen = 0;
+                for (var i = 0; i < record.length; i++) {
+                    no = no + 1;
+                    winlose_agen = parseInt(record[i]["transaksi2D30sdetail_bet"])-parseInt(record[i]["transaksi2D30sdetail_win"])
+                    if(winlose_agen > 0){
+                        winlose_member = -winlose_agen;
+                        detail_winlose_agen_css ="color:blue;";
+                        detail_winlose_member_css ="color:red;";
+                    }else{
+                        winlose_member = Math.abs(winlose_agen);
+                        detail_winlose_agen_css ="color:red;";
+                        detail_winlose_member_css ="color:blue;";
+                    }
+                    listdetailinvoice = [
+                        ...listdetailinvoice,
+                        {
+                            transaksi2D30s_no: no,
+                            transaksi2D30sdetail_id: record[i]["transaksi2D30sdetail_id"],
+                            transaksi2D30sdetail_date: record[i]["transaksi2D30sdetail_date"],
+                            transaksi2D30sdetail_username: record[i]["transaksi2D30sdetail_username"],
+                            transaksi2D30sdetail_ipaddress: record[i]["transaksi2D30sdetail_ipaddress"],
+                            transaksi2D30sdetail_device: record[i]["transaksi2D30sdetail_device"],
+                            transaksi2D30sdetail_browser: record[i]["transaksi2D30sdetail_browser"],
+                            transaksi2D30sdetail_nomor: record[i]["transaksi2D30sdetail_nomor"],
+                            transaksi2D30sdetail_tipebet: record[i]["transaksi2D30sdetail_tipebet"],
+                            transaksi2D30sdetail_bet: record[i]["transaksi2D30sdetail_bet"],
+                            transaksi2D30sdetail_win: record[i]["transaksi2D30sdetail_win"],
+                            transaksi2D30sdetail_winlose_agen: winlose_agen,
+                            transaksi2D30sdetail_winlose_agen_css: detail_winlose_agen_css,
+                            transaksi2D30sdetail_winlose_member: winlose_member,
+                            transaksi2D30sdetail_winlose_member_css: detail_winlose_member_css,
+                            transaksi2D30sdetail_multiplier: record[i]["transaksi2D30sdetail_multiplier"],
+                        },
+                    ];
+                   
+                }
+            }
+        }
+    }
     async function call_invoice(e) {
         const res = await fetch("/api/transaksi2d30s", {
             method: "POST",
@@ -141,11 +252,17 @@
             title_allinvoice = json.periode;
             allinvoice_totalbet = json.totalbet;
             allinvoice_totalwin = json.totalwin;
-            allinvoice_winlose = parseInt(allinvoice_totalbet) - parseInt(allinvoice_winlose);
+            allinvoice_winlose = json.winlose_agen;
+            allinvoice_winlose_member = json.winlose_member;
             if(allinvoice_winlose > 0){
                 allinvoice_winlose_css = "color:blue;"
             }else{
                 allinvoice_winlose_css = "color:red;"
+            }
+            if(allinvoice_winlose_member > 0){
+                allinvoice_winlose_member_css = "color:blue;"
+            }else{
+                allinvoice_winlose_member_css = "color:red;"
             }
             perpage = json.perpage;
             totalrecordall = json.totalrecord;
@@ -494,7 +611,12 @@
             <tbody>
                 {#each listallinvoice as rec}
                 <tr>
-                    <td NOWRAP style="text-align: left;vertical-align: top;font-size: 12px;">{rec.transaksi2D30s_id}</td>
+                    <td on:click={() => {
+                        //id,result,totalmember,totalbet,totalwin
+                        call_detailinvoice(rec.transaksi2D30s_id,rec.transaksi2D30s_date,rec.transaksi2D30s_result,
+                        rec.transaksi2D30s_totalmember,rec.transaksi2D30s_totalbet,rec.transaksi2D30s_totalwin);
+                    }} NOWRAP 
+                        style="text-align: left;vertical-align: top;font-size: 12px;text-decoration: underline;cursor: pointer;">{rec.transaksi2D30s_id}</td>
                     <td NOWRAP style="text-align: center;vertical-align: top;font-size: 12px;">{rec.transaksi2D30s_date}</td>
                     <td NOWRAP style="text-align: center;vertical-align: top;font-size: 12px;">{rec.transaksi2D30s_result}</td>
                     <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:blue;">{new Intl.NumberFormat().format(rec.transaksi2D30s_totalmember)}</td>
@@ -509,20 +631,125 @@
     <slot:template slot="footer">
         <table class="table">
             <tr>
-                <td style="font-size: 12px;">TOTAL BET</td>
-                <td style="font-size: 12px;">:</td>
-                <td style="font-size: 12px;color:blue;">{new Intl.NumberFormat().format(allinvoice_totalbet)}</td>
+                <td style="font-size: 12px;text-align: right;">TOTAL BET</td>
+                <td style="font-size: 12px;text-align: left;">:</td>
+                <td style="font-size: 12px;color:blue;text-align: right;">{new Intl.NumberFormat().format(allinvoice_totalbet)}</td>
             </tr>
             <tr>
-                <td style="font-size: 12px;">TOTAL WIN</td>
-                <td style="font-size: 12px;">:</td>
-                <td style="font-size: 12px;color:red;">{new Intl.NumberFormat().format(allinvoice_totalwin)}</td>
+                <td style="font-size: 12px;text-align: right;">TOTAL WIN</td>
+                <td style="font-size: 12px;text-align: left;">:</td>
+                <td style="font-size: 12px;color:red;text-align: right;">{new Intl.NumberFormat().format(allinvoice_totalwin)}</td>
             </tr>
             <tr>
-                <td style="font-size: 12px;">WINLOSE</td>
-                <td style="font-size: 12px;">:</td>
-                <td style="font-size: 12px;{allinvoice_winlose_css}">{new Intl.NumberFormat().format(allinvoice_winlose)}</td>
+                <td style="font-size: 12px;text-align: right;">WINLOSE AGEN</td>
+                <td style="font-size: 12px;text-align: left;">:</td>
+                <td style="font-size: 12px;{allinvoice_winlose_css}text-align: right;">{new Intl.NumberFormat().format(allinvoice_winlose)}</td>
+            </tr>
+            <tr>
+                <td style="font-size: 12px;text-align: right;">WINLOSE MEMBER</td>
+                <td style="font-size: 12px;text-align: left;">:</td>
+                <td style="font-size: 12px;{allinvoice_winlose_member_css}text-align: right;">{new Intl.NumberFormat().format(allinvoice_winlose_member)}</td>
             </tr>
         </table>
+	</slot:template>
+</Modal>
+
+<Modal
+	modal_id="modal_detailinvoice"
+	modal_size="modal-dialog-centered modal-lg"
+	modal_title="{detail_id}"
+    modal_body_css="height:500px; overflow-y: scroll;"
+    modal_footer_css="padding:5px;"
+	modal_footer={false}>
+	<slot:template slot="body">
+        <div class="row">
+            <div class="col-md-5">
+                <div class="mb-3">
+                    <label for="exampleForm" class="form-label">Date</label>
+                    <Input_custom
+                        bind:value={detail_date}
+                        input_tipe="text_standart"
+                        input_required="required"
+                        input_maxlength="100"
+                        disabled=disabled
+                        input_placeholder="Date"/>
+                </div>
+                <div class="mb-3">
+                    <label for="exampleForm" class="form-label">Result</label>
+                    <Input_custom
+                        bind:value={detail_result}
+                        input_tipe="text_result"
+                        input_required="required"
+                        input_maxlength="2"
+                        disabled=disabled
+                        input_placeholder="Result"/>
+                </div>
+            </div>
+            <div class="col-md-7">
+                <table class="table">
+                    <tr>
+                        <td style="font-size: 12px;">Total Member</td>
+                        <td style="font-size: 12px;">:</td>
+                        <td style="color:blue;font-size: 12px;text-align: right;">{new Intl.NumberFormat().format(detail_totalmember)}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-size: 12px;">Total Bet</td>
+                        <td style="font-size: 12px;">:</td>
+                        <td style="color:blue;font-size: 12px;text-align: right;">{new Intl.NumberFormat().format(detail_totalbet)}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-size: 12px;">Total Win</td>
+                        <td style="font-size: 12px;">:</td>
+                        <td style="color:blue;font-size: 12px;text-align: right;">{new Intl.NumberFormat().format(detail_totalwin)}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-size: 12px;">Winlose</td>
+                        <td style="font-size: 12px;">:</td>
+                        <td style="color:blue;font-size: 12px;text-align: right;">{new Intl.NumberFormat().format(detail_winlose)}</td>
+                    </tr>
+                </table>
+                <ul class="nav nav-pills">
+                    <li on:click={() => {
+                        call_detailinvoice_tab("WIN");
+                    }} class="nav-item" style="cursor: pointer;">
+                      <span class="nav-link {detail_tab_win}">Win</span>
+                    </li>
+                    <li on:click={() => {
+                        call_detailinvoice_tab("LOSE");
+                    }} class="nav-item" style="cursor: pointer;">
+                      <span class="nav-link {detail_tab_lose}">Lose</span>
+                    </li>
+                    <li on:click={() => {
+                        call_detailinvoice_tab("RUNNING");
+                    }} class="nav-item" style="cursor: pointer;">
+                      <span class="nav-link {detail_tab_running}" >Running</span>
+                    </li>
+                </ul>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th width="*" style="text-align: left;vertical-align: top;font-weight:bold;font-size:12px;">USERNAME</th>
+                            <th width="20%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:12px;">NOMOR</th>
+                            <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">BET</th>
+                            <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WIN</th>
+                            <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WINLOSE MEMBER</th>
+                            <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WINLOSE AGEN</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each listdetailinvoice as rec}
+                        <tr>
+                            <td NOWRAP style="text-align: left;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sdetail_username}</td>
+                            <td NOWRAP style="text-align: center;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sdetail_nomor}</td>
+                            <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:blue;">{new Intl.NumberFormat().format(rec.transaksi2D30sdetail_bet)}</td>
+                            <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:blue;">{new Intl.NumberFormat().format(rec.transaksi2D30sdetail_win)}</td>
+                            <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;{rec.transaksi2D30sdetail_winlose_member_css}">{new Intl.NumberFormat().format(rec.transaksi2D30sdetail_winlose_member)}</td>
+                            <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;{rec.transaksi2D30sdetail_winlose_agen_css}">{new Intl.NumberFormat().format(rec.transaksi2D30sdetail_winlose_agen)}</td>
+                        </tr>
+                        {/each}
+                    </tbody>
+                </table>
+            </div>
+        </div>
 	</slot:template>
 </Modal>

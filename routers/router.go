@@ -64,6 +64,7 @@ func Init() *fiber.App {
 	app.Post("/api/saveadminrule", controllers.AdminruleSave)
 	app.Post("/api/transaksi2d30s", controllers.Transaksi2d30shome)
 	app.Post("/api/transaksi2d30sprediksi", controllers.Transaksi2d30sprediksi)
+	app.Post("/api/transaksi2d30sdetail", controllers.Transaksi2d30sdetail)
 	app.Post("/api/transaksi2d30ssave", controllers.Transaksi2d30sSave)
 
 	app.Get("/sse", func(c *fiber.Ctx) error {

@@ -10,15 +10,17 @@ import (
 )
 
 type response_transaksi2d30s struct {
-	Status      int         `json:"status"`
-	Message     string      `json:"message"`
-	Record      interface{} `json:"record"`
-	Periode     string      `json:"periode"`
-	Perpage     int         `json:"perpage"`
-	Totalrecord int         `json:"totalrecord"`
-	Totalbet    int         `json:"totalbet"`
-	Totalwin    int         `json:"totalwin"`
-	Time        string      `json:"time"`
+	Status         int         `json:"status"`
+	Message        string      `json:"message"`
+	Record         interface{} `json:"record"`
+	Periode        string      `json:"periode"`
+	Perpage        int         `json:"perpage"`
+	Totalrecord    int         `json:"totalrecord"`
+	Totalbet       int         `json:"totalbet"`
+	Totalwin       int         `json:"totalwin"`
+	Winlose_agen   int         `json:"winlose_agen"`
+	Winlose_member int         `json:"winlose_member"`
+	Time           string      `json:"time"`
 }
 type response_transaksi2d30sprediksi struct {
 	Status      int         `json:"status"`
@@ -80,15 +82,17 @@ func Transaksi2d30shome(c *fiber.Ctx) error {
 	result := resp.Result().(*response_transaksi2d30s)
 	if result.Status == 200 {
 		return c.JSON(fiber.Map{
-			"status":      result.Status,
-			"message":     result.Message,
-			"record":      result.Record,
-			"perpage":     result.Perpage,
-			"totalrecord": result.Totalrecord,
-			"totalbet":    result.Totalbet,
-			"totalwin":    result.Totalwin,
-			"periode":     result.Periode,
-			"time":        time.Since(render_page).String(),
+			"status":         result.Status,
+			"message":        result.Message,
+			"record":         result.Record,
+			"perpage":        result.Perpage,
+			"totalrecord":    result.Totalrecord,
+			"totalbet":       result.Totalbet,
+			"totalwin":       result.Totalwin,
+			"winlose_agen":   result.Winlose_agen,
+			"winlose_member": result.Winlose_member,
+			"periode":        result.Periode,
+			"time":           time.Since(render_page).String(),
 		})
 	} else {
 		result_error := resp.Error().(*responseerror)
@@ -154,6 +158,74 @@ func Transaksi2d30sprediksi(c *fiber.Ctx) error {
 			"totalwin":    result.Totalwin,
 			"winlose":     result.Winlose,
 			"time":        time.Since(render_page).String(),
+		})
+	} else {
+		result_error := resp.Error().(*responseerror)
+		return c.JSON(fiber.Map{
+			"status":  result_error.Status,
+			"message": result_error.Message,
+			"time":    time.Since(render_page).String(),
+		})
+	}
+}
+func Transaksi2d30sdetail(c *fiber.Ctx) error {
+	type payload_transaksi2d30sdetail struct {
+		Transaksidetail2D30s_invoice string `json:"transaksidetail2D30s_invoice"`
+		Transaksidetail2D30s_status  string `json:"transaksidetail2D30s_status"`
+	}
+	hostname := c.Hostname()
+	bearToken := c.Get("Authorization")
+	token := strings.Split(bearToken, " ")
+	client := new(payload_transaksi2d30sdetail)
+	if err := c.BodyParser(client); err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+
+	log.Println("Hostname: ", hostname)
+	render_page := time.Now()
+	axios := resty.New()
+	resp, err := axios.R().
+		SetResult(response_transaksi2d30s{}).
+		SetAuthToken(token[1]).
+		SetError(responseerror{}).
+		SetHeader("Content-Type", "application/json").
+		SetBody(map[string]interface{}{
+			"client_hostname":              hostname,
+			"transaksidetail2D30s_invoice": client.Transaksidetail2D30s_invoice,
+			"transaksidetail2D30s_status":  client.Transaksidetail2D30s_status,
+		}).
+		Post(PATH + "api/transaksi2d30sdetail")
+	if err != nil {
+		log.Println(err.Error())
+	}
+	log.Println("Response Info:")
+	log.Println("  Error      :", err)
+	log.Println("  Status Code:", resp.StatusCode())
+	log.Println("  Status     :", resp.Status())
+	log.Println("  Proto      :", resp.Proto())
+	log.Println("  Time       :", resp.Time())
+	log.Println("  Received At:", resp.ReceivedAt())
+	log.Println("  Body       :\n", resp)
+	log.Println()
+	result := resp.Result().(*response_transaksi2d30s)
+	if result.Status == 200 {
+		return c.JSON(fiber.Map{
+			"status":         result.Status,
+			"message":        result.Message,
+			"record":         result.Record,
+			"perpage":        result.Perpage,
+			"totalrecord":    result.Totalrecord,
+			"totalbet":       result.Totalbet,
+			"totalwin":       result.Totalwin,
+			"winlose_agen":   result.Winlose_agen,
+			"winlose_member": result.Winlose_member,
+			"periode":        result.Periode,
+			"time":           time.Since(render_page).String(),
 		})
 	} else {
 		result_error := resp.Error().(*responseerror)
