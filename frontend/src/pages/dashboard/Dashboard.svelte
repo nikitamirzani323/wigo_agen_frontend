@@ -453,7 +453,7 @@
                 <div class="card-header" style="background-color:#f6f6f6 ;padding:0px;">
                     <h5 class="card-title" style="font-size: 30px;padding:0px;">
                         <center>
-                            2D 30S
+                            12D 30S
                         </center>
                     </h5>
                 </div>
