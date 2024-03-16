@@ -92,6 +92,21 @@
     let page = 0;
     let css_loader = "display: none;";
     let msgloader = "";
+
+    let nomor_master = [
+        {nomor_id: "00", nomor_flag:false,nomor_css:"btn btn-error",nomor_gangen: "GENAP", nomor_besarkecil: "KECIL", nomor_line: "LINE1", nomor_redblack: "BLACK"},
+		{nomor_id: "01", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GANJIL", nomor_besarkecil: "KECIL", nomor_line: "LINE1", nomor_redblack: "RED"},
+		{nomor_id: "02", nomor_flag:false,nomor_css:"btn btn-error",nomor_gangen: "GENAP", nomor_besarkecil: "KECIL", nomor_line: "LINE2", nomor_redblack: "BLACK"},
+		{nomor_id: "03", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GANJIL", nomor_besarkecil: "KECIL", nomor_line: "LINE2", nomor_redblack: "RED"},
+		{nomor_id: "04", nomor_flag:false,nomor_css:"btn btn-error",nomor_gangen: "GENAP", nomor_besarkecil: "KECIL", nomor_line: "LINE3", nomor_redblack: "BLACK"},
+		{nomor_id: "05", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GANJIL", nomor_besarkecil: "KECIL", nomor_line: "LINE3", nomor_redblack: "RED"},
+		{nomor_id: "06", nomor_flag:false,nomor_css:"btn btn-error",nomor_gangen: "GENAP", nomor_besarkecil: "KECIL", nomor_line: "LINE1", nomor_redblack: "BLACK"},
+		{nomor_id: "07", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GANJIL", nomor_besarkecil: "KECIL", nomor_line: "LINE1", nomor_redblack: "RED"},
+		{nomor_id: "08", nomor_flag:false,nomor_css:"btn btn-error",nomor_gangen: "GENAP", nomor_besarkecil: "KECIL", nomor_line: "LINE2", nomor_redblack: "BLACK"},
+		{nomor_id: "09", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GANJIL", nomor_besarkecil: "KECIL", nomor_line: "LINE2", nomor_redblack: "RED"},
+		{nomor_id: "10", nomor_flag:false,nomor_css:"btn btn-error",nomor_gangen: "GENAP", nomor_besarkecil: "KECIL", nomor_line: "LINE3", nomor_redblack: "BLACK"},
+		{nomor_id: "11", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GANJIL", nomor_besarkecil: "KECIL", nomor_line: "LINE3", nomor_redblack: "RED"},
+    ]
     const call_allinvoice = () => {
         call_alldatainvoice()
         myModal_newentry = new bootstrap.Modal(document.getElementById("modal_allinvoice"));
@@ -164,11 +179,9 @@
         myModal_newentry.show();
     };
     const generateNumber = () => {
-        let numbergenerate = Math.floor(Math.random() * 100);
-        if(numbergenerate < 10){
-            numbergenerate = "0"+numbergenerate
-        }
-        invoice_result_field = numbergenerate
+        let numbergenerate = Math.floor(Math.random() * nomor_master.length)
+
+        invoice_result_field = nomor_master[numbergenerate].nomor_id
     };
     async function call_invoicedetail(e,s) {
         listdetailinvoice = []
@@ -519,12 +532,16 @@
                 <div class="mb-3">
                     <label for="exampleForm" class="form-label">Result</label>
                     <div class="input-group mb-3">
-                        <Input_custom
-                            bind:value={invoice_result_field}
-                            input_tipe="text_result"
-                            input_required="required"
-                            input_maxlength="2"
-                            input_placeholder="Result"/>
+                        <select 
+                            bind:value={invoice_result_field} 
+                            class="form-control required" 
+                            style="text-align: center;">
+                            {#each nomor_master as rec}
+                            <option value="{rec.nomor_id}">{rec.nomor_id}</option>
+                            {/each}
+                            
+                        </select>
+                     
                         <span class="input-group-text">
                             
                             <Button on:click={() => {
@@ -564,24 +581,24 @@
             <div class="col-md-7">
                 <table class="table">
                     <tr>
-                        <td>Total Member</td>
-                        <td>:</td>
-                        <td style="color:blue;">{new Intl.NumberFormat().format(prediksi_totalmember)}</td>
+                        <td width="50%">Total Member</td>
+                        <td width="1%">:</td>
+                        <td width="*" style="color:blue;text-align: right;font-size: 12px;">{new Intl.NumberFormat().format(prediksi_totalmember)}</td>
                     </tr>
                     <tr>
                         <td>Total Bet</td>
                         <td>:</td>
-                        <td style="color:blue;">{new Intl.NumberFormat().format(prediksi_totalbet)}</td>
+                        <td style="color:blue;text-align: right;font-size: 12px;">{new Intl.NumberFormat().format(prediksi_totalbet)}</td>
                     </tr>
                     <tr>
                         <td>Total Win</td>
                         <td>:</td>
-                        <td style="color:blue;">{new Intl.NumberFormat().format(prediksi_totalwin)}</td>
+                        <td style="color:blue;text-align: right;font-size: 12px;">{new Intl.NumberFormat().format(prediksi_totalwin)}</td>
                     </tr>
                     <tr>
                         <td>Winlose</td>
                         <td>:</td>
-                        <td style="color:blue;">{new Intl.NumberFormat().format(prediksi_winlose)}</td>
+                        <td style="color:blue;text-align: right;font-size: 12px;">{new Intl.NumberFormat().format(prediksi_winlose)}</td>
                     </tr>
                 </table>
                 <table class="table table-sm">
