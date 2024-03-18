@@ -120,6 +120,11 @@
     const call_editinvoice = (e) => {
         invoice_id_field = e
         invoice_status_field = ""
+        listprediksi = []
+        prediksi_totalmember = 0
+        prediksi_totalbet = 0
+        prediksi_totalwin = 0
+        prediksi_winlose = 0
         call_invoice(e)
         myModal_newentry = new bootstrap.Modal(document.getElementById("modal_resultinvoice"));
         myModal_newentry.show();
