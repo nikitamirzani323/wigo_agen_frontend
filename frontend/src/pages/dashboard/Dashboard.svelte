@@ -7,6 +7,7 @@
     let path_api = "/";
     let engine_invoice = "";
     let myModal_newentry = "";
+    let myModal_result = "";
     async function initapp() {
         const res = await fetch("/api/valid", {
             method: "POST",
@@ -126,8 +127,8 @@
         prediksi_totalwin = 0
         prediksi_winlose = 0
         call_invoice(e)
-        myModal_newentry = new bootstrap.Modal(document.getElementById("modal_resultinvoice"));
-        myModal_newentry.show();
+        myModal_result = new bootstrap.Modal(document.getElementById("modal_resultinvoice"));
+        myModal_result.show();
     };
     const call_detailinvoice_tab = (e) => {
         switch(e){
@@ -448,7 +449,9 @@
             } else {
                 flag_btnsave = true;
                 msgloader = json.message;
+                
             }
+            myModal_result.hide()
             setTimeout(function () {
                 css_loader = "display: none;";
             }, 1000);
@@ -518,6 +521,7 @@
 <Modal
 	modal_id="modal_resultinvoice"
 	modal_size="modal-dialog-centered modal-lg"
+    modal_body_css="height:500px; overflow-y: scroll;"
 	modal_title="{invoice_id_field}"
     modal_footer_css="padding:5px;"
 	modal_footer={false}>
@@ -565,7 +569,6 @@
                         </span>
                         
                     </div>
-                    
                 </div>
                 <div class="mb-3">
                     <div class="d-grid gap-1">
@@ -581,7 +584,22 @@
                         {/if}
                     </div>
                 </div>
-                
+                <table class="table table-light">
+                    <tr>
+                        <td colspan="3" style="text-align: center;background-color: azure;">INFORMATION</td>
+                    </tr>
+                    <tr>
+                        <td width="50%">Total Member</td>
+                        <td width="1%">:</td>
+                        <td width="*" style="color:blue;text-align: right;font-size: 12px;">{new Intl.NumberFormat().format(prediksi_totalmember)}</td>
+                    </tr>
+                    <tr>
+                        <td>Total Bet</td>
+                        <td>:</td>
+                        <td style="color:blue;text-align: right;font-size: 12px;">{new Intl.NumberFormat().format(invoice_totalbet_field)}</td>
+                    </tr>
+                    
+                </table>
             </div>
             <div class="col-md-7">
                 <table class="table">
@@ -875,11 +893,13 @@
         </table>
 	</slot:template>
     <slot:template slot="footer">
+        {#if listdetailinvoice.length > 0}
         <Button on:click={() => {
             handleSave_invoiceproblem();
         }} 
         button_function="Update"
         button_title="<i class='bi bi-save'></i>&nbsp;&nbsp;Update"
         button_css="btn-warning"/>
+        {/if}
 	</slot:template>
 </Modal>
