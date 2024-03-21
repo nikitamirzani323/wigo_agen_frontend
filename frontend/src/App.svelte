@@ -12,6 +12,7 @@
 	import NotFound from "./pages/NotFound.svelte";
 	export let table_header_font;
 	export let table_body_font;
+	export let path_websocket;
 	let token = localStorage.getItem("token");
 	let routes = "";
 	let isNav = false;
@@ -29,6 +30,7 @@
 				props: {
 					table_header_font: table_header_font,
 					table_body_font: table_body_font,
+					path_websocket: path_websocket,
 				},
 				component: Dashboard,
 			}),

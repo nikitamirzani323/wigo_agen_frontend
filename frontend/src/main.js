@@ -5,6 +5,7 @@ const app = new App({
 	props: {
 		table_header_font: "13px",
 		table_body_font: "13px",
+		path_websocket: "pp88turnamen.com",
 	}
 });
 

@@ -3,6 +3,9 @@
     import Input_custom from '../../components/InputCustom.svelte' 
     import Modal from "../../components/Modal.svelte";
 
+    export let path_websocket = ""
+
+    let conn;
     let token = localStorage.getItem("token");
     let path_api = "/";
     let engine_invoice = "";
@@ -33,15 +36,39 @@
         window.location.href = "/";
     }
     initapp()
-    var source = new EventSource(path_api+"sse");
-    source.onmessage = function(event) {
-        let text_dasar = event.data;
-        let text_replace1 = text_dasar.replace(`"`,"")
-        let text_replace2 = text_replace1.replace(`"`,"")
-        let text_finalsplit = text_replace2.split("|");
-        console.log(event.data)
-        engine_invoice = text_finalsplit[0];
-    };
+    
+    websocket("nuke")
+    function websocket(e){
+        if (window["WebSocket"]) {
+            conn = new WebSocket("wss://"+path_websocket+"/ws/invoiceedit");
+            
+            conn.onclose = function (evt) {
+                var item = document.createElement("div");
+                item.innerHTML = "<b>Connection closed.</b>";
+                // appendLog(item);
+            };
+            conn.onopen = function(evt) {
+            // console.log(evt)
+                conn.send(e)
+            }
+            conn.onmessage = function (evt) {
+                var messages = evt.data;
+                let text_replace1 = messages.replace(`"`,'')
+                let text_replace2 = text_replace1.replace(`"`,'')
+                let text_finalsplit = text_replace2.split("|");
+                
+
+                let data_invoice = text_finalsplit[0];
+                engine_invoice = data_invoice
+                
+            };
+        } else {
+            console.log("Your browser does not support WebSockets.")
+            // appendLog(item);
+        }
+    }
+
+
 
     let flag_btnsave = true;
     let invoice_id_field = ""
