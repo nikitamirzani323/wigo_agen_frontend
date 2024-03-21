@@ -7,7 +7,7 @@
 
     let conn;
     let token = localStorage.getItem("token");
-    let path_api = "/";
+
     let engine_invoice = "";
     let myModal_newentry = "";
     let myModal_result = "";
