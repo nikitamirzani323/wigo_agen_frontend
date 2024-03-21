@@ -63,9 +63,12 @@ func Init() *fiber.App {
 	app.Post("/api/alladminrule", controllers.Adminrulehome)
 	app.Post("/api/saveadminrule", controllers.AdminruleSave)
 	app.Post("/api/transaksi2d30s", controllers.Transaksi2d30shome)
+	app.Post("/api/transaksi2d30sinfo", controllers.Transaksi2d30sinfo)
 	app.Post("/api/transaksi2d30sprediksi", controllers.Transaksi2d30sprediksi)
 	app.Post("/api/transaksi2d30sdetail", controllers.Transaksi2d30sdetail)
 	app.Post("/api/transaksi2d30ssave", controllers.Transaksi2d30sSave)
+	app.Post("/api/conf", controllers.Agenconf)
+	app.Post("/api/confsave", controllers.AgenconfSave)
 
 	app.Get("/sse", func(c *fiber.Ctx) error {
 		c.Set("Content-Type", "text/event-stream")

@@ -50,8 +50,10 @@
     let invoice_status_field = ""
     let invoice_statuscss_field = ""
     let invoice_totalbet_field = 0
+    let invoice_totalmember_field = 0
     let invoice_totalwin_field = 0
     let invoice_winlose_field = 0
+    let listinvoicesummary = []
 
     let listallinvoice = []
     let title_allinvoice = "";
@@ -65,7 +67,10 @@
     let prediksi_totalmember = 0
     let prediksi_totalbet = 0
     let prediksi_totalwin = 0
-    let prediksi_winlose = 0
+    let prediksi_winlose_agen = 0
+    let prediksi_winlose_member = 0
+    let prediksi_winlose_agen_css = ""
+    let prediksi_winlose_member_css = ""
 
     let listdetailinvoice = []
     let detail_id = ""
@@ -74,8 +79,8 @@
     let detail_totalmember = 0
     let detail_totalbet = 0
     let detail_totalwin = 0
-    let detail_winlose_agen_css = ""
-    let detail_winlose_member_css = ""
+    let detail_winlose_agen_css = "color:blue;"
+    let detail_winlose_member_css = "color:blue;"
 
     let detail_winloseparent_agen = 0
     let detail_winloseparent_member = 0
@@ -84,6 +89,13 @@
     let detail_tab_win = "active"
     let detail_tab_lose = ""
     let detail_tab_running = ""
+
+    let conf_2D30_time_field = ""
+    let conf_2D30_win_field = 0
+    let conf_2D30_win_redblack_field = 0
+    let conf_2D30_win_line_field = 0
+    let conf_2D30_operator_field = ""
+
 
     let listPage = [];
     let totalrecord = 0;
@@ -95,7 +107,6 @@
     let msgloader = "";
 
     let nomor_master = [
-        {nomor_id: "00", nomor_flag:false,nomor_css:"btn btn-error",nomor_gangen: "GENAP", nomor_besarkecil: "KECIL", nomor_line: "LINE1", nomor_redblack: "BLACK"},
 		{nomor_id: "01", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GANJIL", nomor_besarkecil: "KECIL", nomor_line: "LINE1", nomor_redblack: "RED"},
 		{nomor_id: "02", nomor_flag:false,nomor_css:"btn btn-error",nomor_gangen: "GENAP", nomor_besarkecil: "KECIL", nomor_line: "LINE2", nomor_redblack: "BLACK"},
 		{nomor_id: "03", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GANJIL", nomor_besarkecil: "KECIL", nomor_line: "LINE2", nomor_redblack: "RED"},
@@ -107,6 +118,7 @@
 		{nomor_id: "09", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GANJIL", nomor_besarkecil: "KECIL", nomor_line: "LINE2", nomor_redblack: "RED"},
 		{nomor_id: "10", nomor_flag:false,nomor_css:"btn btn-error",nomor_gangen: "GENAP", nomor_besarkecil: "KECIL", nomor_line: "LINE3", nomor_redblack: "BLACK"},
 		{nomor_id: "11", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GANJIL", nomor_besarkecil: "KECIL", nomor_line: "LINE3", nomor_redblack: "RED"},
+        {nomor_id: "12", nomor_flag:false,nomor_css:"btn btn-error",nomor_gangen: "GENAP", nomor_besarkecil: "KECIL", nomor_line: "LINE3", nomor_redblack: "BLACK"},
     ]
     const call_allinvoice = () => {
         call_alldatainvoice()
@@ -118,6 +130,16 @@
         myModal_newentry = new bootstrap.Modal(document.getElementById("modal_detailinvoiceproblem"));
         myModal_newentry.show();
     };
+    const call_configgame = () => {
+        conf_2D30_time_field = ""
+        conf_2D30_win_field = 0
+        conf_2D30_win_redblack_field = 0
+        conf_2D30_win_line_field = 0
+        conf_2D30_operator_field = ""
+        call_conf()
+        myModal_result = new bootstrap.Modal(document.getElementById("modal_editconfgame"));
+        myModal_result.show();
+    };
     const call_editinvoice = (e) => {
         invoice_id_field = e
         invoice_status_field = ""
@@ -125,8 +147,11 @@
         prediksi_totalmember = 0
         prediksi_totalbet = 0
         prediksi_totalwin = 0
-        prediksi_winlose = 0
-        call_invoice(e)
+        prediksi_winlose_agen = 0
+        prediksi_winlose_member = 0
+        prediksi_winlose_agen_css = "color:blue;"
+        prediksi_winlose_member_css = "color:blue;"
+        call_invoiceinfo(e)
         myModal_result = new bootstrap.Modal(document.getElementById("modal_resultinvoice"));
         myModal_result.show();
     };
@@ -251,6 +276,51 @@
             }
         }
     }
+    async function call_invoiceinfo(e) {
+        listinvoicesummary = []
+        const res = await fetch("/api/transaksi2d30sinfo", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+            },
+            body: JSON.stringify({
+                transaksi2D30s_invoice: e,
+            }),
+        });
+        const json = await res.json();
+        if (json.status == 200) {
+            let record = json.record;
+            let summary = json.summary;
+            if (record != null) {
+                for (var i = 0; i < record.length; i++) {
+                    invoice_id_field = record[i]["transaksi2D30sinfo_id"];
+                    invoice_result_field = record[i]["transaksi2D30sinfo_result"];
+                    invoice_totalbet_field = record[i]["transaksi2D30sinfo_totalbet"];
+                    invoice_totalmember_field = record[i]["transaksi2D30sinfo_totalmember"];
+                    invoice_status_field = record[i]["transaksi2D30sinfo_status"];
+                   
+                }
+            }
+            let no = 0
+            if (summary != null) {
+                for (var i = 0; i < summary.length; i++) {
+                    no = no + 1
+                    listinvoicesummary = [
+                        ...listinvoicesummary,
+                        {
+                            transaksi2D30ssummary_no: no,
+                            transaksi2D30ssummary_nomor: summary[i]["transaksi2D30ssummary_nomor"],
+                            transaksi2D30ssummary_totalinvoice: summary[i]["transaksi2D30ssummary_totalinvoice"],
+                            transaksi2D30ssummary_totalbet: summary[i]["transaksi2D30ssummary_totalbet"],
+                            transaksi2D30ssummary_totalwin: summary[i]["transaksi2D30ssummary_totalwin"],
+                        },
+                    ];
+                   
+                }
+            }
+        }
+    }
     async function call_invoice(e) {
         const res = await fetch("/api/transaksi2d30s", {
             method: "POST",
@@ -366,7 +436,10 @@
         prediksi_totalmember = 0
         prediksi_totalbet = 0
         prediksi_totalwin = 0
-        prediksi_winlose = 0
+        prediksi_winlose_agen = 0
+        prediksi_winlose_member = 0
+        prediksi_winlose_agen_css = "color:blue;"
+        prediksi_winlose_member_css = "color:blue;"
         const res = await fetch("/api/transaksi2d30sprediksi", {
             method: "POST",
             headers: {
@@ -384,12 +457,30 @@
             prediksi_totalmember = json.totalmember;
             prediksi_totalbet = json.totalbet;
             prediksi_totalwin = json.totalwin;
-            prediksi_winlose = json.winlose;
+            prediksi_winlose_agen = json.winlose_agen;
+            prediksi_winlose_member = json.winlose_member;
+            
+           
+            if(prediksi_winlose_agen > 0){
+                prediksi_winlose_agen_css = "color:blue;"
+            }else{
+                prediksi_winlose_agen_css = "color:red;"
+            }
+            if(prediksi_winlose_member > 0){
+                prediksi_winlose_member_css = "color:blue;"
+            }else{
+                prediksi_winlose_member_css = "color:red;"
+            }
             if (record != null) {
                 let no = 0;
                 for (var i = 0; i < record.length; i++) {
                     no = no + 1;
-                    console.log("asd")
+                    let  prediksi_winlose_css = ""
+                    if(record[i]["transaksi2D30sprediksi_winlose"] > 0){
+                        prediksi_winlose_css = "color:blue;"
+                    }else{
+                        prediksi_winlose_css = "color:red;"
+                    }
                     listprediksi = [
                         ...listprediksi,
                         {
@@ -399,10 +490,36 @@
                             transaksi2D30sprediksi_username: record[i]["transaksi2D30sprediksi_username"],
                             transaksi2D30sprediksi_nomor: record[i]["transaksi2D30sprediksi_nomor"],
                             transaksi2D30sprediksi_bet: record[i]["transaksi2D30sprediksi_bet"],
+                            transaksi2D30sprediksi_multiplier: record[i]["transaksi2D30sprediksi_multiplier"],
                             transaksi2D30sprediksi_win: record[i]["transaksi2D30sprediksi_win"],
                             transaksi2D30sprediksi_winlose: record[i]["transaksi2D30sprediksi_winlose"],
+                            transaksi2D30sprediksi_winlose_css: prediksi_winlose_css,
                         },
                     ];
+                   
+                }
+            }
+        }
+    }
+    async function call_conf() {
+        const res = await fetch("/api/conf", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+            },
+            body: JSON.stringify({}),
+        });
+        const json = await res.json();
+        if (json.status == 200) {
+            let record = json.record;
+            if (record != null) {
+                for (var i = 0; i < record.length; i++) {
+                    conf_2D30_time_field = record[i]["agenconf_2digit_30_time"];
+                    conf_2D30_operator_field = record[i]["agenconf_2digit_30_operator"];
+                    conf_2D30_win_field = record[i]["agenconf_2digit_30_winangka"];
+                    conf_2D30_win_line_field = record[i]["agenconf_2digit_30_winline"];
+                    conf_2D30_win_redblack_field = record[i]["agenconf_2digit_30_winredblack"];
                    
                 }
             }
@@ -459,6 +576,50 @@
             alert(msg)
         }
     }
+    async function handleSave_conf() {
+        let flag = true
+        let msg = ""
+        if(conf_2D30_operator_field == ""){
+            flag = false
+            msg += "The Operator is required\n"
+        }
+       
+        
+        if(flag){
+            flag_btnsave = false;
+            css_loader = "display: inline-block;";
+            msgloader = "Sending...";
+            const res = await fetch("/api/confsave", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + token,
+                },
+                body: JSON.stringify({
+                    page:"COMPANY-SAVE",
+                    agenconf_2digit_30_operator: conf_2D30_operator_field,
+                }),
+            });
+            const json = await res.json();
+            if (json.status == 200) {
+                flag_btnsave = true;
+                msgloader = json.message;
+                
+            } else if(json.status == 403){
+                flag_btnsave = true;
+                alert(json.message)
+            } else {
+                flag_btnsave = true;
+                msgloader = json.message;
+                
+            }
+            setTimeout(function () {
+                css_loader = "display: none;";
+            }, 1000);
+        }else{
+            alert(msg)
+        }
+    }
     const handleSelectPaging = (event) => {
         page = event.target.value;
         call_alldatainvoice()
@@ -507,7 +668,7 @@
                             button_css="btn-info"/>
                         {/if}
                         <Button on:click={() => {
-                                call_editinvoice(engine_invoice);
+                                call_configgame();
                             }} 
                             button_title="<i class='bi bi-gear'></i>&nbsp;Setting"
                             button_css="btn-info"/>
@@ -520,8 +681,8 @@
 
 <Modal
 	modal_id="modal_resultinvoice"
-	modal_size="modal-dialog-centered modal-lg"
-    modal_body_css="height:500px; overflow-y: scroll;"
+	modal_size="modal-dialog-centered modal-xl"
+    modal_body_css="height:700px; overflow-y: scroll;"
 	modal_title="{invoice_id_field}"
     modal_footer_css="padding:5px;"
 	modal_footer={false}>
@@ -554,17 +715,17 @@
                         <span class="input-group-text">
                             
                             <Button on:click={() => {
-                                generateNumber();
-                            }} 
-                            button_function="SAVE"
-                            button_title="<i class='bi bi-gear'></i>&nbsp;&nbsp;Generate"
-                            button_css="btn-info"/>
-                            &nbsp;
-                            <Button on:click={() => {
-                                call_prediksi();
-                            }} 
-                            button_function="SAVE"
-                            button_title="<i class='bi bi-gear'></i>&nbsp;&nbsp;Check"
+                                    generateNumber();
+                                }} 
+                                button_function="SAVE"
+                                button_title="<i class='bi bi-gear'></i>&nbsp;&nbsp;Generate"
+                                button_css="btn-info"/>
+                                &nbsp;
+                                <Button on:click={() => {
+                                    call_prediksi();
+                                }} 
+                                button_function="SAVE"
+                                button_title="<i class='bi bi-gear'></i>&nbsp;&nbsp;Check"
                             button_css="btn-info"/>
                         </span>
                         
@@ -584,6 +745,7 @@
                         {/if}
                     </div>
                 </div>
+                <img src="https://i.ibb.co/n7fpTXC/keyboard.png" class="img-fluid img-thumbnail">
                 <table class="table table-light">
                     <tr>
                         <td colspan="3" style="text-align: center;background-color: azure;">INFORMATION</td>
@@ -591,15 +753,35 @@
                     <tr>
                         <td width="50%">Total Member</td>
                         <td width="1%">:</td>
-                        <td width="*" style="color:blue;text-align: right;font-size: 12px;">{new Intl.NumberFormat().format(prediksi_totalmember)}</td>
+                        <td width="*" style="color:blue;text-align: right;font-size: 12px;">{new Intl.NumberFormat().format(invoice_totalmember_field)}</td>
                     </tr>
                     <tr>
                         <td>Total Bet</td>
                         <td>:</td>
                         <td style="color:blue;text-align: right;font-size: 12px;">{new Intl.NumberFormat().format(invoice_totalbet_field)}</td>
                     </tr>
-                    
                 </table>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th width="20%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:12px;">NOMOR</th>
+                            <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">TOTALINVOICE</th>
+                            <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">TOTALBET</th>
+                            <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">TOTALWIN</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each listinvoicesummary as rec}
+                        <tr>
+                            <td NOWRAP style="text-align: center;vertical-align: top;font-size: 12px;">{rec.transaksi2D30ssummary_nomor}</td>
+                            <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:blue;">{new Intl.NumberFormat().format(rec.transaksi2D30ssummary_totalinvoice)}</td>
+                            <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:blue;">{new Intl.NumberFormat().format(rec.transaksi2D30ssummary_totalbet)}</td>
+                            <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:blue;">{new Intl.NumberFormat().format(rec.transaksi2D30ssummary_totalwin)}</td>
+                        </tr>
+                        {/each}
+                    </tbody>
+                </table>
+
             </div>
             <div class="col-md-7">
                 <table class="table">
@@ -619,19 +801,25 @@
                         <td style="color:blue;text-align: right;font-size: 12px;">{new Intl.NumberFormat().format(prediksi_totalwin)}</td>
                     </tr>
                     <tr>
-                        <td>Winlose</td>
+                        <td>Winlose Agen</td>
                         <td>:</td>
-                        <td style="color:blue;text-align: right;font-size: 12px;">{new Intl.NumberFormat().format(prediksi_winlose)}</td>
+                        <td style="{prediksi_winlose_agen_css}text-align: right;font-size: 12px;">{new Intl.NumberFormat().format(prediksi_winlose_agen)}</td>
+                    </tr>
+                    <tr>
+                        <td>Winlose Member</td>
+                        <td>:</td>
+                        <td style="{prediksi_winlose_member_css}text-align: right;font-size: 12px;">{new Intl.NumberFormat().format(prediksi_winlose_member)}</td>
                     </tr>
                 </table>
                 <table class="table table-sm">
                     <thead>
                         <tr>
                             <th width="*" style="text-align: left;vertical-align: top;font-weight:bold;font-size:12px;">USERNAME</th>
-                            <th width="20%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:12px;">NOMOR</th>
-                            <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">BET</th>
-                            <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WIN</th>
-                            <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WINLOSE</th>
+                            <th NOWRAP width="20%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:12px;">NOMOR</th>
+                            <th NOWRAP width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">BET</th>
+                            <th NOWRAP width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">MULTIPLIER</th>
+                            <th NOWRAP width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WIN</th>
+                            <th NOWRAP width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WINLOSE</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -640,8 +828,9 @@
                             <td NOWRAP style="text-align: left;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sprediksi_username}</td>
                             <td NOWRAP style="text-align: center;vertical-align: top;font-size: 12px;">{rec.transaksi2D30sprediksi_nomor}</td>
                             <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:blue;">{new Intl.NumberFormat().format(rec.transaksi2D30sprediksi_bet)}</td>
+                            <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:blue;">{new Intl.NumberFormat().format(rec.transaksi2D30sprediksi_multiplier)}</td>
                             <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:blue;">{new Intl.NumberFormat().format(rec.transaksi2D30sprediksi_win)}</td>
-                            <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;">{new Intl.NumberFormat().format(rec.transaksi2D30sprediksi_winlose)}</td>
+                            <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;{rec.transaksi2D30sprediksi_winlose_css}">{new Intl.NumberFormat().format(rec.transaksi2D30sprediksi_winlose)}</td>
                         </tr>
                         {/each}
                     </tbody>
@@ -901,5 +1090,84 @@
         button_title="<i class='bi bi-save'></i>&nbsp;&nbsp;Update"
         button_css="btn-warning"/>
         {/if}
+	</slot:template>
+</Modal>
+
+
+<Modal
+	modal_id="modal_editconfgame"
+	modal_size="modal-dialog-centered"
+	modal_title="CONFIG 12D 30S"
+    modal_footer_css="padding:5px;"
+	modal_footer={true}>
+	<slot:template slot="body">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label for="exampleForm" class="form-label">Time (s)</label>
+                    <Input_custom
+                        bind:value={conf_2D30_time_field}
+                        input_tipe="number_standart"
+                        input_required="required"
+                        input_maxlength="3"
+                        disabled=disabled
+                        input_placeholder="Time"/>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label for="exampleForm" class="form-label">Win Angka</label>
+                    <Input_custom
+                        bind:value={conf_2D30_win_field}
+                        disabled=disabled
+                        input_tipe="number_float"
+                        input_required="required"
+                        input_maxlength="5"
+                        input_placeholder="Win Angka"/>
+                </div>
+                <div class="mb-3">
+                    <label for="exampleForm" class="form-label">Win RedBlack</label>
+                    <Input_custom
+                        bind:value={conf_2D30_win_redblack_field}
+                        disabled=disabled
+                        input_tipe="number_float"
+                        input_required="required"
+                        input_maxlength="5"
+                        input_placeholder="Win RedBlack"/>
+                </div>
+                <div class="mb-3">
+                    <label for="exampleForm" class="form-label">Win Line</label>
+                    <Input_custom
+                        bind:value={conf_2D30_win_line_field}
+                        disabled=disabled
+                        input_tipe="number_float"
+                        input_required="required"
+                        input_maxlength="5"
+                        input_placeholder="Win Line"/>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label for="exampleForm" class="form-label">Operator</label>
+                    <select
+                        class="form-control required"
+                        bind:value={conf_2D30_operator_field}>
+                        <option value="">--Please Select--</option>
+                        <option value="Y">ACTIVE</option>
+                        <option value="N">DEACTIVE</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+	</slot:template>
+    <slot:template slot="footer">
+        
+        <Button on:click={() => {
+            handleSave_conf();
+        }} 
+        button_function="Update"
+        button_title="<i class='bi bi-save'></i>&nbsp;&nbsp;Update"
+        button_css="btn-warning"/>
+  
 	</slot:template>
 </Modal>
