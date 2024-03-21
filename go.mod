@@ -1,4 +1,4 @@
-module github.com/nikitamirzani323/WIGO_AGEN_FRONTEND
+module bitbucket.org/isbtotogroup/wigo_agen_frontend
 
 go 1.17
 

@@ -5,9 +5,9 @@ import (
 	"strings"
 	"time"
 
+	"bitbucket.org/isbtotogroup/wigo_agen_frontend/entities"
 	"github.com/go-resty/resty/v2"
 	"github.com/gofiber/fiber/v2"
-	"github.com/nikitamirzani323/WIGO_AGEN_FRONTEND/entities"
 )
 
 type response_admin struct {

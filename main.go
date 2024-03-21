@@ -6,8 +6,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	"bitbucket.org/isbtotogroup/wigo_agen_frontend/routers"
 	"github.com/joho/godotenv"
-	"github.com/nikitamirzani323/WIGO_AGEN_FRONTEND/routers"
 )
 
 func main() {
