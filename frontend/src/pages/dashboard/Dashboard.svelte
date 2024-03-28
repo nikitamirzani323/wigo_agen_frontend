@@ -121,6 +121,8 @@
     let conf_2D30_win_field = 0
     let conf_2D30_win_redblack_field = 0
     let conf_2D30_win_line_field = 0
+    let conf_2D30_win_zona_field = 0
+    let conf_2D30_win_jackpot_field = 0
     let conf_2D30_operator_field = ""
 
 
@@ -132,21 +134,22 @@
     let page = 0;
     let css_loader = "display: none;";
     let msgloader = "";
-
     let nomor_master = [
-		{nomor_id: "01", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GANJIL", nomor_besarkecil: "KECIL", nomor_line: "LINE1", nomor_redblack: "BLACK"},
-		{nomor_id: "02", nomor_flag:false,nomor_css:"btn btn-error",nomor_gangen: "GENAP", nomor_besarkecil: "KECIL", nomor_line: "LINE1", nomor_redblack: "RED"},
-		{nomor_id: "03", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GANJIL", nomor_besarkecil: "KECIL", nomor_line: "LINE2", nomor_redblack: "BLACK"},
-		{nomor_id: "04", nomor_flag:false,nomor_css:"btn btn-error",nomor_gangen: "GENAP", nomor_besarkecil: "KECIL", nomor_line: "LINE2", nomor_redblack: "RED"},
-		{nomor_id: "05", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GANJIL", nomor_besarkecil: "KECIL", nomor_line: "LINE3", nomor_redblack: "BLACK"},
-		{nomor_id: "06", nomor_flag:false,nomor_css:"btn btn-error",nomor_gangen: "GENAP", nomor_besarkecil: "KECIL", nomor_line: "LINE3", nomor_redblack: "RED"},
-		{nomor_id: "07", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GANJIL", nomor_besarkecil: "BESAR", nomor_line: "LINE1", nomor_redblack: "BLACK"},
-		{nomor_id: "08", nomor_flag:false,nomor_css:"btn btn-error",nomor_gangen: "GENAP", nomor_besarkecil: "BESAR", nomor_line: "LINE1", nomor_redblack: "RED"},
-		{nomor_id: "09", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GANJIL", nomor_besarkecil: "BESAR", nomor_line: "LINE2", nomor_redblack: "BLACK"},
-		{nomor_id: "10", nomor_flag:false,nomor_css:"btn btn-error",nomor_gangen: "GENAP", nomor_besarkecil: "BESAR", nomor_line: "LINE2", nomor_redblack: "RED"},
-		{nomor_id: "11", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GANJIL", nomor_besarkecil: "BESAR", nomor_line: "LINE3", nomor_redblack: "BLACK"},
-        {nomor_id: "12", nomor_flag:false,nomor_css:"btn btn-error",nomor_gangen: "GENAP", nomor_besarkecil: "BESAR", nomor_line: "LINE3", nomor_redblack: "RED"},
+		{nomor_id: "01", nomor_value:"01", nomor_zona:"ZONA_A", nomor_flag:false,nomor_css:"btn btn-error",nomor_gangen: "GANJIL", nomor_besarkecil: "KECIL", nomor_line: "LINE1", nomor_redblack: "RED"},
+		{nomor_id: "02", nomor_value:"02", nomor_zona:"ZONA_B", nomor_flag:false,nomor_css:"btn btn-error",nomor_gangen: "GENAP", nomor_besarkecil: "KECIL", nomor_line: "LINE1", nomor_redblack: "RED"},
+		{nomor_id: "03", nomor_value:"03", nomor_zona:"ZONA_C", nomor_flag:false,nomor_css:"btn btn-error",nomor_gangen: "GANJIL", nomor_besarkecil: "KECIL", nomor_line: "LINE2", nomor_redblack: "RED"},
+		{nomor_id: "04", nomor_value:"04", nomor_zona:"ZONA_A", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GENAP", nomor_besarkecil: "KECIL", nomor_line: "LINE2", nomor_redblack: "BLACK"},
+		{nomor_id: "05", nomor_value:"05", nomor_zona:"ZONA_B", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GANJIL", nomor_besarkecil: "KECIL", nomor_line: "LINE2", nomor_redblack: "BLACK"},
+		{nomor_id: "06", nomor_value:"06", nomor_zona:"ZONA_C", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GENAP", nomor_besarkecil: "KECIL", nomor_line: "LINE2", nomor_redblack: "BLACK"},
+		{nomor_id: "07", nomor_value:"07", nomor_zona:"ZONA_A", nomor_flag:false,nomor_css:"btn btn-error",nomor_gangen: "GANJIL", nomor_besarkecil: "BESAR", nomor_line: "LINE3", nomor_redblack: "RED"},
+		{nomor_id: "08", nomor_value:"08", nomor_zona:"ZONA_B", nomor_flag:false,nomor_css:"btn btn-error",nomor_gangen: "GENAP", nomor_besarkecil: "BESAR", nomor_line: "LINE3", nomor_redblack: "RED"},
+		{nomor_id: "09", nomor_value:"09", nomor_zona:"ZONA_C", nomor_flag:false,nomor_css:"btn btn-error",nomor_gangen: "GANJIL", nomor_besarkecil: "BESAR", nomor_line: "LINE3", nomor_redblack: "RED"},
+		{nomor_id: "10", nomor_value:"10", nomor_zona:"ZONA_A", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GENAP", nomor_besarkecil: "BESAR", nomor_line: "LINE4", nomor_redblack: "BLACK"},
+		{nomor_id: "11", nomor_value:"11", nomor_zona:"ZONA_B", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GANJIL", nomor_besarkecil: "BESAR", nomor_line: "LINE4", nomor_redblack: "BLACK"},
+        {nomor_id: "12", nomor_value:"12", nomor_zona:"ZONA_C", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GENAP", nomor_besarkecil: "BESAR", nomor_line: "LINE4", nomor_redblack: "BLACK"},
+        {nomor_id: "JACKPOT", nomor_value:"JACKPOT", nomor_zona:"ZONA_C", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GENAP", nomor_besarkecil: "BESAR", nomor_line: "LINE4", nomor_redblack: "BLACK"},
     ]
+    
     const call_allinvoice = () => {
         call_alldatainvoice()
         myModal_newentry = new bootstrap.Modal(document.getElementById("modal_allinvoice"));
@@ -162,6 +165,8 @@
         conf_2D30_win_field = 0
         conf_2D30_win_redblack_field = 0
         conf_2D30_win_line_field = 0
+        conf_2D30_win_zona_field = 0
+        conf_2D30_win_jackpot_field = 0
         conf_2D30_operator_field = ""
         call_conf()
         myModal_result = new bootstrap.Modal(document.getElementById("modal_editconfgame"));
@@ -546,6 +551,8 @@
                     conf_2D30_operator_field = record[i]["agenconf_2digit_30_operator"];
                     conf_2D30_win_field = record[i]["agenconf_2digit_30_winangka"];
                     conf_2D30_win_line_field = record[i]["agenconf_2digit_30_winline"];
+                    conf_2D30_win_zona_field = record[i]["agenconf_2digit_30_winzona"];
+                    conf_2D30_win_jackpot_field = record[i]["agenconf_2digit_30_winjackpot"];
                     conf_2D30_win_redblack_field = record[i]["agenconf_2digit_30_winredblack"];
                    
                 }
@@ -1171,6 +1178,26 @@
                         input_required="required"
                         input_maxlength="5"
                         input_placeholder="Win Line"/>
+                </div>
+                <div class="mb-3">
+                    <label for="exampleForm" class="form-label">Win Zona</label>
+                    <Input_custom
+                        bind:value={conf_2D30_win_zona_field}
+                        disabled=disabled
+                        input_tipe="number_float"
+                        input_required="required"
+                        input_maxlength="5"
+                        input_placeholder="Win Zona"/>
+                </div>
+                <div class="mb-3">
+                    <label for="exampleForm" class="form-label">Win Jackpot</label>
+                    <Input_custom
+                        bind:value={conf_2D30_win_jackpot_field}
+                        disabled=disabled
+                        input_tipe="number_float"
+                        input_required="required"
+                        input_maxlength="5"
+                        input_placeholder="Win Jackpot"/>
                 </div>
             </div>
             <div class="col-md-4">
