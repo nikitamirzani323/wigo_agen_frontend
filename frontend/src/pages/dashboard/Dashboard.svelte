@@ -147,7 +147,7 @@
 		{nomor_id: "10", nomor_value:"10", nomor_zona:"ZONA_A", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GENAP", nomor_besarkecil: "BESAR", nomor_line: "LINE4", nomor_redblack: "BLACK"},
 		{nomor_id: "11", nomor_value:"11", nomor_zona:"ZONA_B", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GANJIL", nomor_besarkecil: "BESAR", nomor_line: "LINE4", nomor_redblack: "BLACK"},
         {nomor_id: "12", nomor_value:"12", nomor_zona:"ZONA_C", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GENAP", nomor_besarkecil: "BESAR", nomor_line: "LINE4", nomor_redblack: "BLACK"},
-        {nomor_id: "JACKPOT", nomor_value:"JACKPOT", nomor_zona:"ZONA_C", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GENAP", nomor_besarkecil: "BESAR", nomor_line: "LINE4", nomor_redblack: "BLACK"},
+        {nomor_id: "JP", nomor_value:"JP", nomor_zona:"ZONA_C", nomor_flag:false,nomor_css:"btn",nomor_gangen: "GENAP", nomor_besarkecil: "BESAR", nomor_line: "LINE4", nomor_redblack: "BLACK"},
     ]
     
     const call_allinvoice = () => {
