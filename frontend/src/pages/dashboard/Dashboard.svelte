@@ -155,6 +155,11 @@
         myModal_newentry = new bootstrap.Modal(document.getElementById("modal_allinvoice"));
         myModal_newentry.show();
     };
+    const call_invoicesummarydaily = () => {
+        call_alldatainvoicesummarydaily()
+        myModal_newentry = new bootstrap.Modal(document.getElementById("modal_summarydailyinvoice"));
+        myModal_newentry.show();
+    };
     const call_detailinvoiceproblem = () => {
         call_invoicedetail("","RUNNING")
         myModal_newentry = new bootstrap.Modal(document.getElementById("modal_detailinvoiceproblem"));
@@ -463,6 +468,84 @@
             }
         }
     }
+    async function call_alldatainvoicesummarydaily() {
+        listallinvoice = []
+        allinvoice_totalbet = 0;
+        allinvoice_totalwin = 0;
+        allinvoice_winlose = 0;
+        allinvoice_winlose_member = 0;
+        const res = await fetch("/api/transaksi2d30ssummarydaily", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+            },
+            body: JSON.stringify({
+                transaksi2D30s_page: parseInt(page),
+            }),
+        });
+        const json = await res.json();
+        if (json.status == 200) {
+            let record = json.record;
+            title_allinvoice = json.periode;
+            allinvoice_totalbet = json.totalbet;
+            allinvoice_totalwin = json.totalwin;
+            allinvoice_winlose = json.winlose_agen;
+            allinvoice_winlose_member = json.winlose_member;
+            if(allinvoice_winlose > 0){
+                allinvoice_winlose_css = "color:blue;"
+            }else{
+                allinvoice_winlose_css = "color:red;"
+            }
+            if(allinvoice_winlose_member > 0){
+                allinvoice_winlose_member_css = "color:blue;"
+            }else{
+                allinvoice_winlose_member_css = "color:red;"
+            }
+            perpage = json.perpage;
+            totalrecordall = json.totalrecord;
+            if (record != null) {
+                totalpaging = Math.ceil(parseInt(totalrecordall) / parseInt(perpage))
+                totalrecord = record.length;
+                let no = 0;
+                let winlose_css = "";
+                for (var i = 0; i < record.length; i++) {
+                    no = no + 1;
+                    if(parseInt(record[i]["transaksi2D30ssummarydaily_winlose"]) > 0){
+                        winlose_css = "color:blue;"
+                    }else{
+                        winlose_css = "color:red;"
+                    }
+                    listallinvoice = [
+                        ...listallinvoice,
+                        {
+                            transaksi2D30ssummarydaily_no: no,
+                            transaksi2D30ssummarydaily_id: record[i]["transaksi2D30ssummarydaily_id"],
+                            transaksi2D30ssummarydaily_periode: record[i]["transaksi2D30ssummarydaily_periode"],
+                            transaksi2D30ssummarydaily_totalbet: record[i]["transaksi2D30ssummarydaily_totalbet"],
+                            transaksi2D30ssummarydaily_totalwin: record[i]["transaksi2D30ssummarydaily_totalwin"],
+                            transaksi2D30ssummarydaily_winlose: record[i]["transaksi2D30ssummarydaily_winlose"],
+                            transaksi2D30ssummarydaily_winlose_css: winlose_css,
+                            transaksi2D30ssummarydaily_create: record[i]["transaksi2D30ssummarydaily_create"],
+                            transaksi2D30ssummarydaily_update: record[i]["transaksi2D30ssummarydaily_update"],
+                        },
+                    ];
+                   
+                }
+                listPage = [];
+                for(var i=1;i<=totalpaging;i++){
+                    listPage = [
+                        ...listPage,
+                        {
+                            page_id: i,
+                            page_value: ((i*perpage)-perpage),
+                            page_display: i + " Of " + perpage*i,
+                        },
+                    ];
+                }
+            }
+        }
+    }
     async function call_prediksi() {
         listprediksi = []
         prediksi_totalmember = 0
@@ -684,11 +767,20 @@
                 </div>
                 <div class="card-footer">
                     <center>
-                        <Button on:click={() => {
-                                call_allinvoice();
-                            }} 
-                            button_title="<i class='bi bi-file-earmark'></i>&nbsp;Invoice"
-                            button_css="btn-primary"/>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class='bi bi-file-earmark'></i>&nbsp;Invoice
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li on:click={() => {
+                                    call_allinvoice();
+                                }} class="dropdown-item" style="cursor: pointer;">All</li>
+                                <li on:click={() => {
+                                    call_invoicesummarydaily();
+                                }} class="dropdown-item"  style="cursor: pointer;">Summary Daily</li>
+                            </ul>
+                        </div>
+                        
                         <Button on:click={() => {
                                 call_detailinvoiceproblem();
                             }} 
@@ -1223,5 +1315,76 @@
         button_title="<i class='bi bi-save'></i>&nbsp;&nbsp;Update"
         button_css="btn-warning"/>
   
+	</slot:template>
+</Modal>
+
+
+<Modal
+	modal_id="modal_summarydailyinvoice"
+	modal_size="modal-dialog-centered modal-lg"
+	modal_title="SUMMARY DAILY PERIODE : {title_allinvoice}"
+    modal_body_css="height:500px; overflow-y: scroll;"
+    modal_footer_css="padding:5px;"
+	modal_search={true}
+	modal_footer={true}>
+    <slot:template slot="search">
+        <div class="float-end">
+            <select
+                on:change={handleSelectPaging}
+                style="text-align: center;"
+                class="form-control">
+                {#each listPage as rec}
+                    <option value={rec.page_value}>{rec.page_display}</option>
+                {/each}
+            </select>
+        </div>
+    </slot:template>
+	<slot:template slot="body">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th width="5%" style="text-align: left;vertical-align: top;font-weight:bold;font-size:12px;">CODE</th>
+                    <th width="*" style="text-align: center;vertical-align: top;font-weight:bold;font-size:12px;">PERIODE</th>
+                    <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">BET</th>
+                    <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WIN</th>
+                    <th width="20%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:12px;">WINLOSE</th>
+                </tr>
+            </thead>
+            <tbody>
+                {#each listallinvoice as rec}
+                <tr>
+                    <td NOWRAP style="text-align: left;vertical-align: top;font-size: 12px;">{rec.transaksi2D30ssummarydaily_id}</td>
+                    <td NOWRAP style="text-align: center;vertical-align: top;font-size: 12px;">{rec.transaksi2D30ssummarydaily_periode}</td>
+                    <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:blue;">{new Intl.NumberFormat().format(rec.transaksi2D30ssummarydaily_totalbet)}</td>
+                    <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;color:red;">{new Intl.NumberFormat().format(rec.transaksi2D30ssummarydaily_totalwin)}</td>
+                    <td NOWRAP style="text-align: right;vertical-align: top;font-size: 12px;{rec.transaksi2D30ssummarydaily_winlose_css}">{new Intl.NumberFormat().format(rec.transaksi2D30ssummarydaily_winlose)}</td>
+                </tr>
+                {/each}
+            </tbody>
+        </table>
+	</slot:template>
+    <slot:template slot="footer">
+        <table class="table">
+            <tr>
+                <td style="font-size: 12px;text-align: right;">TOTAL BET</td>
+                <td style="font-size: 12px;text-align: left;">:</td>
+                <td style="font-size: 12px;color:blue;text-align: right;">{new Intl.NumberFormat().format(allinvoice_totalbet)}</td>
+            </tr>
+            <tr>
+                <td style="font-size: 12px;text-align: right;">TOTAL WIN</td>
+                <td style="font-size: 12px;text-align: left;">:</td>
+                <td style="font-size: 12px;color:red;text-align: right;">{new Intl.NumberFormat().format(allinvoice_totalwin)}</td>
+            </tr>
+            <tr>
+                <td style="font-size: 12px;text-align: right;">WINLOSE AGEN</td>
+                <td style="font-size: 12px;text-align: left;">:</td>
+                <td style="font-size: 12px;{allinvoice_winlose_css}text-align: right;">{new Intl.NumberFormat().format(allinvoice_winlose)}</td>
+            </tr>
+            <tr>
+                <td style="font-size: 12px;text-align: right;">WINLOSE MEMBER</td>
+                <td style="font-size: 12px;text-align: left;">:</td>
+                <td style="font-size: 12px;{allinvoice_winlose_member_css}text-align: right;">{new Intl.NumberFormat().format(allinvoice_winlose_member)}</td>
+            </tr>
+        </table>
 	</slot:template>
 </Modal>

@@ -112,6 +112,74 @@ func Transaksi2d30shome(c *fiber.Ctx) error {
 		})
 	}
 }
+func Transaksi2d30ssummarydaily(c *fiber.Ctx) error {
+	type payload_transaksi2d30ssummarydaily struct {
+		Transaksi2D30ssummarydaily_search string `json:"transaksi2D30ssummarydaily_search"`
+		Transaksi2D30ssummarydaily_page   int    `json:"transaksi2D30ssummarydaily_page"`
+	}
+	hostname := c.Hostname()
+	bearToken := c.Get("Authorization")
+	token := strings.Split(bearToken, " ")
+	client := new(payload_transaksi2d30ssummarydaily)
+	if err := c.BodyParser(client); err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+
+	fmt.Println("Hostname: ", hostname)
+	render_page := time.Now()
+	axios := resty.New()
+	resp, err := axios.R().
+		SetResult(response_transaksi2d30s{}).
+		SetAuthToken(token[1]).
+		SetError(responseerror{}).
+		SetHeader("Content-Type", "application/json").
+		SetBody(map[string]interface{}{
+			"client_hostname":                   hostname,
+			"transaksi2D30ssummarydaily_search": client.Transaksi2D30ssummarydaily_search,
+			"transaksi2D30ssummarydaily_page":   client.Transaksi2D30ssummarydaily_page,
+		}).
+		Post(PATH + "api/transaksi2d30ssummarydaily")
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	fmt.Println("Response Info:")
+	fmt.Println("  Error      :", err)
+	fmt.Println("  Status Code:", resp.StatusCode())
+	fmt.Println("  Status     :", resp.Status())
+	fmt.Println("  Proto      :", resp.Proto())
+	fmt.Println("  Time       :", resp.Time())
+	fmt.Println("  Received At:", resp.ReceivedAt())
+	fmt.Println("  Body       :\n", resp)
+	fmt.Println()
+	result := resp.Result().(*response_transaksi2d30s)
+	if result.Status == 200 {
+		return c.JSON(fiber.Map{
+			"status":         result.Status,
+			"message":        result.Message,
+			"record":         result.Record,
+			"perpage":        result.Perpage,
+			"totalrecord":    result.Totalrecord,
+			"totalbet":       result.Totalbet,
+			"totalwin":       result.Totalwin,
+			"winlose_agen":   result.Winlose_agen,
+			"winlose_member": result.Winlose_member,
+			"periode":        result.Periode,
+			"time":           time.Since(render_page).String(),
+		})
+	} else {
+		result_error := resp.Error().(*responseerror)
+		return c.JSON(fiber.Map{
+			"status":  result_error.Status,
+			"message": result_error.Message,
+			"time":    time.Since(render_page).String(),
+		})
+	}
+}
 func Transaksi2d30sinfo(c *fiber.Ctx) error {
 	type payload_transaksi2d30sinfo struct {
 		Transaksi2D30s_invoice string `json:"transaksi2D30s_invoice"`

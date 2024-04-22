@@ -4,6 +4,7 @@
 	import Navbar from "./components/Navbar.svelte";
 	import Dashboard from "./pages/dashboard/Dashboard.svelte";
 	
+	
 	import Admin from "./pages/admin/Admin.svelte";
 	import Adminrule from "./pages/adminrule/Adminrule.svelte";
 	import Currency from "./pages/currency/Currency.svelte";
