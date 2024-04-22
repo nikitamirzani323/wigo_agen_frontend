@@ -778,14 +778,13 @@
                                 <li on:click={() => {
                                     call_invoicesummarydaily();
                                 }} class="dropdown-item"  style="cursor: pointer;">Summary Daily</li>
+                                <li on:click={() => {
+                                    call_detailinvoiceproblem();
+                                }} class="dropdown-item"  style="cursor: pointer;">Invoice Problem</li>
                             </ul>
                         </div>
                         
-                        <Button on:click={() => {
-                                call_detailinvoiceproblem();
-                            }} 
-                            button_title="<i class='bi bi-file-earmark'></i>&nbsp;Invoice Problem"
-                            button_css="btn-warning"/>
+                       
                         {#if engine_invoice != ""}
                             <Button on:click={() => {
                                 call_editinvoice(engine_invoice);
