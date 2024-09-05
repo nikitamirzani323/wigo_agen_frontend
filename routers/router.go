@@ -2,6 +2,7 @@ package routers
 
 import (
 	"bitbucket.org/isbtotogroup/wigo_agen_frontend/controllers"
+	"bitbucket.org/isbtotogroup/wigo_agen_frontend/middleware"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -47,22 +48,24 @@ func Init() *fiber.App {
 			"Subdomain":   c.Subdomains(),
 		})
 	})
-	app.Get("/dashboard", monitor.New())
+	app.Get("/check/healthz", controllers.HealthCheck)
+	app.Get("/check/dashboard", monitor.New())
 
-	app.Post("/api/login", controllers.CheckLogin)
-	app.Post("/api/valid", controllers.Home)
-	app.Post("/api/alladmin", controllers.Adminhome)
-	app.Post("/api/saveadmin", controllers.AdminSave)
-	app.Post("/api/alladminrule", controllers.Adminrulehome)
-	app.Post("/api/saveadminrule", controllers.AdminruleSave)
-	app.Post("/api/transaksi2d30s", controllers.Transaksi2d30shome)
-	app.Post("/api/transaksi2d30ssummarydaily", controllers.Transaksi2d30ssummarydaily)
-	app.Post("/api/transaksi2d30sinfo", controllers.Transaksi2d30sinfo)
-	app.Post("/api/transaksi2d30sprediksi", controllers.Transaksi2d30sprediksi)
-	app.Post("/api/transaksi2d30sdetail", controllers.Transaksi2d30sdetail)
-	app.Post("/api/transaksi2d30ssave", controllers.Transaksi2d30sSave)
-	app.Post("/api/conf", controllers.Agenconf)
-	app.Post("/api/confsave", controllers.AgenconfSave)
+	api := app.Group("/api", middleware.Gateway)
+	api.Post("/login", controllers.CheckLogin)
+	api.Post("/valid", controllers.Home)
+	api.Post("/alladmin", controllers.Adminhome)
+	api.Post("/saveadmin", controllers.AdminSave)
+	api.Post("/alladminrule", controllers.Adminrulehome)
+	api.Post("/saveadminrule", controllers.AdminruleSave)
+	api.Post("/transaksi2d30s", controllers.Transaksi2d30shome)
+	api.Post("/transaksi2d30ssummarydaily", controllers.Transaksi2d30ssummarydaily)
+	api.Post("/transaksi2d30sinfo", controllers.Transaksi2d30sinfo)
+	api.Post("/transaksi2d30sprediksi", controllers.Transaksi2d30sprediksi)
+	api.Post("/transaksi2d30sdetail", controllers.Transaksi2d30sdetail)
+	api.Post("/transaksi2d30ssave", controllers.Transaksi2d30sSave)
+	api.Post("/conf", controllers.Agenconf)
+	api.Post("/confsave", controllers.AgenconfSave)
 
 	return app
 }
